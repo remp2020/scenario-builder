@@ -18,12 +18,13 @@ import ActionIcon from '@material-ui/icons/Mail';
 import TriggerIcon from '@material-ui/icons/Notifications';
 import WaitIcon from '@material-ui/icons/AccessAlarmsOutlined';
 import SegmentIcon from '@material-ui/icons/SubdirectoryArrowRight';
+import GoalIcon from '@material-ui/icons/CheckBox';
 
 import * as config from './../../config';
 import { TrayItemWidget } from './TrayItemWidget';
 import { ExportService } from './../../services/ExportService';
 import Notification from '../Notification';
-import { Email, Segment, Trigger, Wait } from './../elements';
+import { Email, Segment, Trigger, Wait, Goal } from './../elements';
 import {
   setScenarioId,
   setScenarioName,
@@ -266,6 +267,12 @@ class BodyWidget extends React.Component {
                 name='Wait'
                 icon={<WaitIcon />}
               />
+
+              <TrayItemWidget
+                model={{ type: 'goal' }}
+                name='Goal'
+                icon={<GoalIcon />}
+              />
             </List>
           </Drawer>
           <Notification
@@ -300,6 +307,8 @@ class BodyWidget extends React.Component {
                   node = new Trigger.NodeModel({});
                 } else if (data.type === 'wait') {
                   node = new Wait.NodeModel({});
+                } else if (data.type === 'goal') {
+                  node = new Goal.NodeModel({});
                 }
                 var points = this.props.app
                   .getDiagramEngine()

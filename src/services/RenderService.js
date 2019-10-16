@@ -1,7 +1,7 @@
 import flatMap from 'lodash/flatMap';
 
 // import the custom models
-import { Email, Segment, Trigger, Wait } from './../components/elements';
+import { Email, Segment, Trigger, Wait, Goal } from './../components/elements';
 
 export class RenderService {
   constructor(activeModel, payload = {}) {
@@ -103,6 +103,34 @@ export class RenderService {
         const nextNodes = this.renderElements(element, visual);
         const link = node.getPort('right').link(nextNodes[0].getPort('left'));
         this.activeModel.addLink(link);
+
+        return nextNodes;
+      });
+    } else if (element.type === 'goal') {
+      element.selectedGoal = element.goal.code;
+      node = new Goal.NodeModel(element);
+
+      nodes = element.goal.descendants.flatMap(descendantObj => {
+        const element = this.payload.elements[descendantObj.uuid];
+        const visual = this.payload.visual[element.id];
+
+        const nextNodes = this.renderElements(element, visual);
+
+        if (
+          descendantObj.segment &&
+          descendantObj.segment.direction === 'positive'
+        ) {
+          const link = node.getPort('right').link(nextNodes[0].getPort('left'));
+          this.activeModel.addLink(link);
+        } else if (
+          descendantObj.segment &&
+          descendantObj.segment.direction === 'negative'
+        ) {
+          const link = node
+            .getPort('bottom')
+            .link(nextNodes[0].getPort('left'));
+          this.activeModel.addLink(link);
+        }
 
         return nextNodes;
       });
