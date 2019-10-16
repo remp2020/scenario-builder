@@ -107,7 +107,7 @@ export class RenderService {
         return nextNodes;
       });
     } else if (element.type === 'goal') {
-      element.selectedGoal = element.goal.code;
+      element.selectedGoals = element.goal.codes;
       node = new Goal.NodeModel(element);
 
       nodes = element.goal.descendants.flatMap(descendantObj => {

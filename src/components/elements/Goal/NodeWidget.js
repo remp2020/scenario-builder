@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import OkIcon from '@material-ui/icons/Check';
-import NopeIcon from '@material-ui/icons/Close';
 import TimeoutIcon from '@material-ui/icons/AccessTime';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -23,9 +22,9 @@ class NodeWidget extends React.Component {
     super(props);
     this.state = {
       nodeFormName: this.props.node.name,
-      selectedGoal: this.props.node.selectedGoal,
+      selectedGoals: this.props.node.selectedGoals,
       dialogOpened: false,
-      anchorElementForTooltip: null
+      anchorElementForTooltip: null,      
     };
   }
 
@@ -48,7 +47,7 @@ class NodeWidget extends React.Component {
     this.setState({
       dialogOpened: true,
       nodeFormName: this.props.node.name,
-      selectedGoal: this.props.node.selectedGoal,
+      selectedGoals: this.props.node.selectedGoals,
       anchorElementForTooltip: null
     });
     this.props.dispatch(setCanvasZoomingAndPanning(false));
@@ -59,36 +58,12 @@ class NodeWidget extends React.Component {
     this.props.dispatch(setCanvasZoomingAndPanning(true));
   };
 
-  // maybe refactor to more effective way if is a problem
   transformOptionsForSelect = () => {
-
-    return [];
-
-    // this.props.goals
-
-    // const lodashGrouped = groupBy(
-    //   this.props.segments,
-    //   segment => segment.group.name
-    // );
-
-    // const properlyGrouped = [];
-
-    // Object.keys(lodashGrouped).forEach(key => {
-    //   properlyGrouped.push({
-    //     label: key,
-    //     sorting: lodashGrouped[key][0].group.sorting,
-    //     options: lodashGrouped[key].map(segment => ({
-    //       value: segment.code,
-    //       label: segment.name
-    //     }))
-    //   });
-    // });
-
-    // const properlyGroupedSorted = properlyGrouped.sort((a, b) => {
-    //   return a.sorting - b.sorting;
-    // });
-
-    // return properlyGroupedSorted;
+    const goals = this.props.goals.map(goal => ({
+      value: goal.code,
+      label: goal.name,
+    }));
+    return goals;
   };
 
   handleNodeMouseEnter = event => {
@@ -102,24 +77,23 @@ class NodeWidget extends React.Component {
   };
 
   getFormatedValue = () => {
-    const match = this.props.goals.find(goal => {
-      return goal.code === this.state.selectedGoal;
+    let goals = {};
+    this.props.goals.forEach(goal => {
+      goals[goal.code] = goal;
     });
 
-    return match
-      ? {
-          value: match.code,
-          label: match.name
-        }
-      : {};
-  };
+    let matches = [];
 
-  getSelectedGoalValue = () => {
-    const selected = this.props.goals.find(
-      goal => goal.code === this.props.node.selectedGoal
-    );
+    if (this.state.selectedGoals !== undefined) {
+      this.state.selectedGoals.forEach(goalCode => {
+        matches.push({
+          value: goalCode,
+          label: goals[goalCode].name 
+        });
+      });
+    }
 
-    return selected ? ` - ${selected.name}` : '';
+    return matches;
   };
 
   render() {
@@ -134,9 +108,7 @@ class NodeWidget extends React.Component {
       >
         <div className={this.bem('__title')}>
           <div className={this.bem('__name')}>
-            {this.props.node.name
-              ? this.props.node.name
-              : `Goal ${this.getSelectedGoalValue()}`}
+            {this.props.node.name ? this.props.node.name : 'Goal'}
           </div>
         </div>
 
@@ -226,13 +198,14 @@ class NodeWidget extends React.Component {
                 <MaterialSelect
                   options={this.transformOptionsForSelect()}
                   value={this.getFormatedValue()}
-                  onChange={event => {
+                  onChange={selectedGoals => {
                     this.setState({
-                      selectedGoal: event.value
+                      selectedGoals: selectedGoals.map(item => item.value)
                     });
                   }}
-                  placeholder='Pick one'
-                  label='Selected Goal'
+                  isMulti={true}
+                  placeholder='Pick goals'
+                  label='Selected Goal(s)'
                 />
               </Grid>
             </Grid>
@@ -252,7 +225,7 @@ class NodeWidget extends React.Component {
               color='primary'
               onClick={() => {
                 this.props.node.name = this.state.nodeFormName;
-                this.props.node.selectedGoal = this.state.selectedGoal;
+                this.props.node.selectedGoals = this.state.selectedGoals;
 
                 this.props.diagramEngine.repaintCanvas();
                 this.closeDialog();
