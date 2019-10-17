@@ -107,6 +107,20 @@ export class RenderService {
         return nextNodes;
       });
     } else if (element.type === 'goal') {
+
+      if (element.goal.hasOwnProperty("timeoutMinutes")) {
+        if (element.goal.timeoutMinutes % 1440 === 0) {
+          element.timeoutUnit = 'days';
+          element.timeoutTime = element.goal.timeoutMinutes / 1440;
+        } else if (element.wait.minutes % 60 === 0) {
+          element.timeoutUnit = 'hours';
+          element.timeoutTime = element.goal.timeoutMinutes / 60;
+        } else {
+          element.timeoutUnit = 'minutes';
+          element.timeoutTime = element.goal.timeoutMinutes;
+        }
+      }
+
       element.selectedGoals = element.goal.codes;
       node = new Goal.NodeModel(element);
 

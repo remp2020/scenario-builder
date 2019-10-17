@@ -7,7 +7,9 @@ export class NodeModel extends BaseNodeModel {
     super('goal', element.id);
 
     this.name = element.name;
-    this.selectedSegment = element.selectedSegment;
+    this.selectedGoals = element.selectedGoals;
+    this.timeoutTime = element.timeoutTime;
+    this.timeoutUnit = element.timeoutUnit;
 
     this.addPort(new PortModel('left'));
     this.addPort(new PortModel('bottom'));
@@ -17,13 +19,17 @@ export class NodeModel extends BaseNodeModel {
   deSerialize(ob, engine) {
     super.deSerialize(ob, engine);
     this.name = ob.name;
-    this.selectedSegment = ob.selectedSegment;
+    this.selectedGoals = ob.selectedGoals;
+    this.timeoutTime = ob.timeoutTime || '';
+    this.timeoutUnit = ob.timeoutUnit || 'days';
   }
 
   serialize() {
     return _.merge(super.serialize(), {
       name: this.name,
-      selectedSegment: this.selectedSegment
+      selectedGoals: this.selectedGoals,
+      timeoutTime: this.timeoutTime,
+      timeoutUnit: this.timeoutUnit,
     });
   }
 }

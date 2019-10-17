@@ -8,6 +8,10 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import GoalIcon from '@material-ui/icons/CheckBox';
@@ -23,6 +27,8 @@ class NodeWidget extends React.Component {
     this.state = {
       nodeFormName: this.props.node.name,
       selectedGoals: this.props.node.selectedGoals,
+      timeoutTime: this.props.node.timeoutTime,
+      timeoutUnit: this.props.node.timeoutUnit,
       dialogOpened: false,
       anchorElementForTooltip: null,      
     };
@@ -48,6 +54,8 @@ class NodeWidget extends React.Component {
       dialogOpened: true,
       nodeFormName: this.props.node.name,
       selectedGoals: this.props.node.selectedGoals,
+      timeoutTime: this.props.node.timeoutTime,
+      timeoutUnit: this.props.node.timeoutUnit,
       anchorElementForTooltip: null
     });
     this.props.dispatch(setCanvasZoomingAndPanning(false));
@@ -173,7 +181,9 @@ class NodeWidget extends React.Component {
 
           <DialogContent>
             <DialogContentText>
-              Goal node evaluates whether user has completed selected onboarding goal.
+              Goal node evaluates whether user has completed selected onboarding goals. 
+              Timeout value can be optionally specified, defining a point in time when evalution of completed goals is stopped.
+              Execution flow can be directed two ways from the node - a positive direction, when all goals are completed, or a negative one, when timeout threshold is reached.
             </DialogContentText>
 
             <Grid container spacing={32}>
@@ -209,6 +219,47 @@ class NodeWidget extends React.Component {
                 />
               </Grid>
             </Grid>
+            
+            <Grid container spacing={32}>
+              <Grid item xs={6}>
+                <TextField
+                  id='timeout-time'
+                  label='Timeout time'
+                  type='number'
+                  placeholder="No timeout"
+                  helperText="Optionally select a timeout"
+                  fullWidth
+                  value={this.state.timeoutTime}
+                  onChange={event => {
+                    this.setState({
+                      timeoutTime: event.target.value
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor='time-unit'>Time unit</InputLabel>
+                  <Select
+                    value={this.state.timeoutUnit}
+                    onChange={event => {
+                      this.setState({
+                        timeoutUnit: event.target.value
+                      });
+                    }}
+                    inputProps={{
+                      name: 'time-unit',
+                      id: 'time-unit'
+                    }}
+                  >
+                    <MenuItem value='minutes'>Minutes</MenuItem>
+                    <MenuItem value='hours'>Hours</MenuItem>
+                    <MenuItem value='days'>Days</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+
           </DialogContent>
 
           <DialogActions>
@@ -226,7 +277,8 @@ class NodeWidget extends React.Component {
               onClick={() => {
                 this.props.node.name = this.state.nodeFormName;
                 this.props.node.selectedGoals = this.state.selectedGoals;
-
+                this.props.node.timeoutTime = this.state.timeoutTime;
+                this.props.node.timeoutUnit = this.state.timeoutUnit;
                 this.props.diagramEngine.repaintCanvas();
                 this.closeDialog();
               }}

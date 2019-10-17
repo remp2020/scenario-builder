@@ -118,6 +118,47 @@ export class ExportService {
           )
         }
       };
+    } else if (node.type === 'goal') {
+      const descendantsPositive = this.getAllChildrenNodes(node, 'right').map(
+        descendantNode => this.formatDescendant(descendantNode, node)
+      );
+      const descendantsNegative = this.getAllChildrenNodes(node, 'bottom').map(
+        descendantNode => this.formatDescendant(descendantNode, node)
+      );
+
+      let goalProperties = {
+        codes: node.selectedGoals ? node.selectedGoals : [],
+        descendants: [...descendantsPositive, ...descendantsNegative]
+      };
+
+      console.log("exporting goal");
+      console.log(node);
+
+      if (node.timeoutTime && node.timeoutUnit) {
+        let timeoutMinutes = 0;
+        switch (node.timeoutUnit) {
+          case 'minutes':
+            timeoutMinutes = node.timeoutTime;
+            break;
+          case 'hours':
+            timeoutMinutes = node.timeoutTime * 60;
+            break;
+          case 'days':
+            timeoutMinutes = node.timeoutTime * 60 * 24;
+            break;
+          default:
+            timeoutMinutes = node.timeoutTime;
+        }
+
+        goalProperties.timeoutMinutes = timeoutMinutes;
+      }
+
+      return {
+        id: node.id,
+        name: node.name ? node.name : '',
+        type: 'goal',
+        goal: goalProperties,
+      };
     }
   }
 
