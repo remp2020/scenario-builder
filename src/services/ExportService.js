@@ -1,3 +1,16 @@
+function unitTimeToMinutes(time, unit) {
+  switch (unit) {
+    case 'minutes':
+      return time;
+    case 'hours':
+      return time * 60;
+    case 'days':
+      return time * 60 * 24;
+    default:
+      return time;
+  }
+}
+
 export class ExportService {
   constructor(model) {
     this.model = model;
@@ -92,27 +105,12 @@ export class ExportService {
         )
       };
     } else if (node.type === 'wait') {
-      let waitingTime = 0;
-      switch (node.waitingUnit) {
-        case 'minutes':
-          waitingTime = node.waitingTime;
-          break;
-        case 'hours':
-          waitingTime = node.waitingTime * 60;
-          break;
-        case 'days':
-          waitingTime = node.waitingTime * 60 * 24;
-          break;
-        default:
-          waitingTime = node.waitingTime;
-      }
-
       return {
         id: node.id,
         name: node.name ? node.name : '',
         type: 'wait',
         wait: {
-          minutes: waitingTime,
+          minutes: unitTimeToMinutes(node.waitingTime, node.waitingUnit),
           descendants: this.getAllChildrenNodes(node).map(descendantNode =>
             this.formatDescendant(descendantNode, node)
           )
@@ -128,29 +126,12 @@ export class ExportService {
 
       let goalProperties = {
         codes: node.selectedGoals ? node.selectedGoals : [],
-        descendants: [...descendantsPositive, ...descendantsNegative]
+        descendants: [...descendantsPositive, ...descendantsNegative],
+        recheckPeriodMinutes: unitTimeToMinutes(node.recheckPeriodTime, node.recheckPeriodUnit)
       };
 
-      console.log("exporting goal");
-      console.log(node);
-
       if (node.timeoutTime && node.timeoutUnit) {
-        let timeoutMinutes = 0;
-        switch (node.timeoutUnit) {
-          case 'minutes':
-            timeoutMinutes = node.timeoutTime;
-            break;
-          case 'hours':
-            timeoutMinutes = node.timeoutTime * 60;
-            break;
-          case 'days':
-            timeoutMinutes = node.timeoutTime * 60 * 24;
-            break;
-          default:
-            timeoutMinutes = node.timeoutTime;
-        }
-
-        goalProperties.timeoutMinutes = timeoutMinutes;
+        goalProperties.timeoutMinutes = unitTimeToMinutes(node.timeoutTime, node.timeoutUnit);
       }
 
       return {

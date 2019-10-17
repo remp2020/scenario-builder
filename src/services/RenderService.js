@@ -3,6 +3,24 @@ import flatMap from 'lodash/flatMap';
 // import the custom models
 import { Email, Segment, Trigger, Wait, Goal } from './../components/elements';
 
+function minutesToTimeUnit(minutes) {
+  if (minutes % 1440 === 0) {
+    return {
+      unit: 'days',
+      time: minutes / 1440 
+    };
+  } else if (minutes % 60 === 0) {
+    return {
+      unit: 'hours',
+      time: minutes / 60 
+    };
+  }
+  return {
+    unit: 'minutes',
+    time: minutes
+  };
+}
+
 export class RenderService {
   constructor(activeModel, payload = {}) {
     this.activeModel = activeModel;
@@ -83,16 +101,9 @@ export class RenderService {
         return nextNodes;
       });
     } else if (element.type === 'wait') {
-      if (element.wait.minutes % 1440 === 0) {
-        element.waitingUnit = 'days';
-        element.waitingTime = element.wait.minutes / 1440;
-      } else if (element.wait.minutes % 60 === 0) {
-        element.waitingUnit = 'hours';
-        element.waitingTime = element.wait.minutes / 60;
-      } else {
-        element.waitingUnit = 'minutes';
-        element.waitingTime = element.wait.minutes;
-      }
+      const timeUnit = minutesToTimeUnit(element.wait.minutes);
+      element.waitingUnit = timeUnit.unit;
+      element.waitingTime = timeUnit.time;
 
       node = new Wait.NodeModel(element);
 
@@ -107,19 +118,15 @@ export class RenderService {
         return nextNodes;
       });
     } else if (element.type === 'goal') {
-
       if (element.goal.hasOwnProperty("timeoutMinutes")) {
-        if (element.goal.timeoutMinutes % 1440 === 0) {
-          element.timeoutUnit = 'days';
-          element.timeoutTime = element.goal.timeoutMinutes / 1440;
-        } else if (element.wait.minutes % 60 === 0) {
-          element.timeoutUnit = 'hours';
-          element.timeoutTime = element.goal.timeoutMinutes / 60;
-        } else {
-          element.timeoutUnit = 'minutes';
-          element.timeoutTime = element.goal.timeoutMinutes;
-        }
+        const timeUnit = minutesToTimeUnit(element.goal.timeoutMinutes);
+        element.timeoutUnit = timeUnit.unit;
+        element.timeoutTime = timeUnit.time;
       }
+
+      const recheckPeriodTimeUnit = minutesToTimeUnit(element.goal.recheckPeriodMinutes);
+      element.recheckPeriodUnit = recheckPeriodTimeUnit.unit;
+      element.recheckPeriodTime = recheckPeriodTimeUnit.time;
 
       element.selectedGoals = element.goal.codes;
       node = new Goal.NodeModel(element);

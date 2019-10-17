@@ -308,7 +308,10 @@ class BodyWidget extends React.Component {
                 } else if (data.type === 'wait') {
                   node = new Wait.NodeModel({});
                 } else if (data.type === 'goal') {
-                  node = new Goal.NodeModel({});
+                  node = new Goal.NodeModel({
+                    recheckPeriodUnit: 'hours',
+                    recheckPeriodTime: 1,
+                  });
                 }
                 var points = this.props.app
                   .getDiagramEngine()

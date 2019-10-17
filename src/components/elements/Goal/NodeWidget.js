@@ -29,6 +29,8 @@ class NodeWidget extends React.Component {
       selectedGoals: this.props.node.selectedGoals,
       timeoutTime: this.props.node.timeoutTime,
       timeoutUnit: this.props.node.timeoutUnit,
+      recheckPeriodTime: this.props.node.recheckPeriodTime,
+      recheckPeriodUnit: this.props.node.recheckPeriodUnit,
       dialogOpened: false,
       anchorElementForTooltip: null,      
     };
@@ -56,6 +58,8 @@ class NodeWidget extends React.Component {
       selectedGoals: this.props.node.selectedGoals,
       timeoutTime: this.props.node.timeoutTime,
       timeoutUnit: this.props.node.timeoutUnit,
+      recheckPeriodTime: this.props.node.recheckPeriodTime,
+      recheckPeriodUnit: this.props.node.recheckPeriodUnit,
       anchorElementForTooltip: null
     });
     this.props.dispatch(setCanvasZoomingAndPanning(false));
@@ -219,6 +223,45 @@ class NodeWidget extends React.Component {
                 />
               </Grid>
             </Grid>
+
+            <Grid container spacing={32}>
+              <Grid item xs={6}>
+                <TextField
+                  id='recheck-period-time'
+                  label='Recheck period time'
+                  type='number'
+                  helperText="How often goals completition should be checked"
+                  fullWidth
+                  value={this.state.recheckPeriodTime}
+                  onChange={event => {
+                    this.setState({
+                      recheckPeriodTime: event.target.value
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor='time-unit'>Time unit</InputLabel>
+                  <Select
+                    value={this.state.recheckPeriodUnit}
+                    onChange={event => {
+                      this.setState({
+                        recheckPeriodUnit: event.target.value
+                      });
+                    }}
+                    inputProps={{
+                      name: 'recheck-period-unit',
+                      id: 'recheck-period-unit'
+                    }}
+                  >
+                    <MenuItem value='minutes'>Minutes</MenuItem>
+                    <MenuItem value='hours'>Hours</MenuItem>
+                    <MenuItem value='days'>Days</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
             
             <Grid container spacing={32}>
               <Grid item xs={6}>
@@ -279,6 +322,8 @@ class NodeWidget extends React.Component {
                 this.props.node.selectedGoals = this.state.selectedGoals;
                 this.props.node.timeoutTime = this.state.timeoutTime;
                 this.props.node.timeoutUnit = this.state.timeoutUnit;
+                this.props.node.recheckPeriodTime = this.state.recheckPeriodTime;
+                this.props.node.recheckPeriodUnit = this.state.recheckPeriodUnit;
                 this.props.diagramEngine.repaintCanvas();
                 this.closeDialog();
               }}
