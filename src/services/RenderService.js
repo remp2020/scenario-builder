@@ -79,23 +79,16 @@ export class RenderService {
       nodes = element.segment.descendants.flatMap(descendantObj => {
         const element = this.payload.elements[descendantObj.uuid];
         const visual = this.payload.visual[element.id];
-
         const nextNodes = this.renderElements(element, visual);
 
-        if (
-          descendantObj.segment &&
-          descendantObj.segment.direction === 'positive'
-        ) {
-          const link = node.getPort('right').link(nextNodes[0].getPort('left'));
-          this.activeModel.addLink(link);
-        } else if (
-          descendantObj.segment &&
-          descendantObj.segment.direction === 'negative'
-        ) {
-          const link = node
-            .getPort('bottom')
-            .link(nextNodes[0].getPort('left'));
-          this.activeModel.addLink(link);
+        if (descendantObj.direction) {
+          if (descendantObj.direction === 'positive') {
+            const link = node.getPort('right').link(nextNodes[0].getPort('left'));
+            this.activeModel.addLink(link);
+          } else if (descendantObj.direction === 'negative') {
+            const link = node.getPort('bottom').link(nextNodes[0].getPort('left'));
+            this.activeModel.addLink(link);
+          }
         }
 
         return nextNodes;
@@ -134,23 +127,16 @@ export class RenderService {
       nodes = element.goal.descendants.flatMap(descendantObj => {
         const element = this.payload.elements[descendantObj.uuid];
         const visual = this.payload.visual[element.id];
-
         const nextNodes = this.renderElements(element, visual);
 
-        if (
-          descendantObj.segment &&
-          descendantObj.segment.direction === 'positive'
-        ) {
-          const link = node.getPort('right').link(nextNodes[0].getPort('left'));
-          this.activeModel.addLink(link);
-        } else if (
-          descendantObj.segment &&
-          descendantObj.segment.direction === 'negative'
-        ) {
-          const link = node
-            .getPort('bottom')
-            .link(nextNodes[0].getPort('left'));
-          this.activeModel.addLink(link);
+        if (descendantObj.direction) {
+          if (descendantObj.direction === 'positive') {
+            const link = node.getPort('right').link(nextNodes[0].getPort('left'));
+            this.activeModel.addLink(link);
+          } else if (descendantObj.direction === 'negative') {
+            const link = node.getPort('bottom').link(nextNodes[0].getPort('left'));
+            this.activeModel.addLink(link);
+          }
         }
 
         return nextNodes;

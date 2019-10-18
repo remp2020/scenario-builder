@@ -62,7 +62,6 @@ export class ExportService {
   }
 
   formatNode(node) {
-    console.log(node.type);
     if (node.type === 'email') {
       return {
         id: node.id,
@@ -149,9 +148,9 @@ export class ExportService {
     };
 
     if (parentNode.type === 'segment') {
-      descendant.segment = {
-        direction: node.portName === 'right' ? 'positive' : 'negative'
-      };
+      descendant.direction = node.portName === 'right' ? 'positive' : 'negative';
+    } else if (parentNode.type === 'goal') {
+      descendant.direction = node.portName === 'right' ? 'positive' : 'negative';
     }
 
     return descendant;
