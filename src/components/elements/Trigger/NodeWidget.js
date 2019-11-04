@@ -114,10 +114,11 @@ class NodeWidget extends React.Component {
           </div>
         </div>
 
-        <StatisticsTooltip
+        {/* TODO: fix tooltip in triggers */}
+        {/* <StatisticsTooltip
           id={this.props.node.id}
           anchorElement={this.state.anchorElementForTooltip}
-        />
+        /> */}
 
         <Dialog
           open={this.state.dialogOpened}
