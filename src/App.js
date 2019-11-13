@@ -7,6 +7,7 @@ import { Application } from './components/Application';
 import * as config from './config';
 import {
   fetchSegments,
+  fetchGoals,
   fetchTriggers,
   fetchScenario,
   setScenarioName,
@@ -18,6 +19,7 @@ class App extends Component {
     const { dispatch } = this.props;
 
     dispatch(fetchSegments());
+    dispatch(fetchGoals());
     dispatch(fetchTriggers());
     dispatch(fetchMails());
 

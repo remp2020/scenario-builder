@@ -211,7 +211,7 @@ class MaterialSelect extends React.Component {
       <div className={classes.root}>
         <Select
           classes={classes}
-          styles={selectStyles}
+          styles={selectStyles} 
           components={components}
           menuPosition={'fixed'}
           textFieldProps={{
@@ -220,6 +220,7 @@ class MaterialSelect extends React.Component {
               shrink: true
             }
           }}
+          isMulti={this.props.isMulti}
           options={this.props.options}
           value={this.props.value}
           onChange={this.props.onChange}
@@ -237,7 +238,12 @@ MaterialSelect.propTypes = {
   placeholder: PropTypes.string,
   label: PropTypes.string,
   value: PropTypes.any,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  isMulti: PropTypes.bool
+};
+
+MaterialSelect.defaultProp = {
+  isMulti: false
 };
 
 export default withStyles(styles, { withTheme: true })(MaterialSelect);

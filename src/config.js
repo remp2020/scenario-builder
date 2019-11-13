@@ -22,4 +22,5 @@ export const URL_SCENARIO_CREATE = `${API_HOST}/scenarios/create`;
 export const URL_SEGMENTS_INDEX = `${API_HOST}/user-segments/list`;
 export const URL_TRIGGERS_INDEX = `${API_HOST}/events/list`;
 export const URL_MAILS_INDEX = `${API_HOST}/mail-template/list`;
+export const URL_GOALS_INDEX = `${API_HOST}/onboarding-goals/list`;
 export const URL_TOOLTIPS = `${API_HOST}/scenarios/element`;

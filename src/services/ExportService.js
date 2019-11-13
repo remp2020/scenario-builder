@@ -1,3 +1,16 @@
+function unitTimeToMinutes(time, unit) {
+  switch (unit) {
+    case 'minutes':
+      return time;
+    case 'hours':
+      return time * 60;
+    case 'days':
+      return time * 60 * 24;
+    default:
+      return time;
+  }
+}
+
 export class ExportService {
   constructor(model) {
     this.model = model;
@@ -49,7 +62,6 @@ export class ExportService {
   }
 
   formatNode(node) {
-    console.log(node.type);
     if (node.type === 'email') {
       return {
         id: node.id,
@@ -92,31 +104,40 @@ export class ExportService {
         )
       };
     } else if (node.type === 'wait') {
-      let waitingTime = 0;
-      switch (node.waitingUnit) {
-        case 'minutes':
-          waitingTime = node.waitingTime;
-          break;
-        case 'hours':
-          waitingTime = node.waitingTime * 60;
-          break;
-        case 'days':
-          waitingTime = node.waitingTime * 60 * 24;
-          break;
-        default:
-          waitingTime = node.waitingTime;
-      }
-
       return {
         id: node.id,
         name: node.name ? node.name : '',
         type: 'wait',
         wait: {
-          minutes: waitingTime,
+          minutes: unitTimeToMinutes(node.waitingTime, node.waitingUnit),
           descendants: this.getAllChildrenNodes(node).map(descendantNode =>
             this.formatDescendant(descendantNode, node)
           )
         }
+      };
+    } else if (node.type === 'goal') {
+      const descendantsPositive = this.getAllChildrenNodes(node, 'right').map(
+        descendantNode => this.formatDescendant(descendantNode, node)
+      );
+      const descendantsNegative = this.getAllChildrenNodes(node, 'bottom').map(
+        descendantNode => this.formatDescendant(descendantNode, node)
+      );
+
+      let goalProperties = {
+        codes: node.selectedGoals ? node.selectedGoals : [],
+        descendants: [...descendantsPositive, ...descendantsNegative],
+        recheckPeriodMinutes: unitTimeToMinutes(node.recheckPeriodTime, node.recheckPeriodUnit)
+      };
+
+      if (node.timeoutTime && node.timeoutUnit) {
+        goalProperties.timeoutMinutes = unitTimeToMinutes(node.timeoutTime, node.timeoutUnit);
+      }
+
+      return {
+        id: node.id,
+        name: node.name ? node.name : '',
+        type: 'goal',
+        goal: goalProperties,
       };
     }
   }
@@ -127,9 +148,9 @@ export class ExportService {
     };
 
     if (parentNode.type === 'segment') {
-      descendant.segment = {
-        direction: node.portName === 'right' ? 'positive' : 'negative'
-      };
+      descendant.direction = node.portName === 'right' ? 'positive' : 'negative';
+    } else if (parentNode.type === 'goal') {
+      descendant.direction = node.portName === 'right' ? 'positive' : 'negative';
     }
 
     return descendant;
