@@ -17,17 +17,26 @@ export class Application {
     this.activeModel = new DiagramModel();
     this.renderService = new RenderService(this.activeModel);
     this.payload = payload;
+    this.corruptedPayload = false;
 
     if (payload) {
-      this.renderPaylod();
+      this.renderPayload();
     } else {
       this.registerCustomModels();
     }
   }
 
-  renderPaylod() {
+  renderPayload() {
     this.registerCustomModels();
-    this.renderService.renderPayload(this.payload);
+    try {
+      this.renderService.renderPayload(this.payload);
+    } catch(ex) {
+      // In case of rendering error, dump loaded model, log and flag as corrupted scenario
+      console.log(ex.message);
+      this.corruptedPayload = true;
+      this.activeModel = new DiagramModel();
+    }
+    
     this.diagramEngine.setDiagramModel(this.activeModel);
     this.diagramEngine.repaintCanvas();
   }
@@ -73,5 +82,9 @@ export class Application {
 
   getDiagramEngine() {
     return this.diagramEngine;
+  }
+
+  isCorruptedPayload() {
+    return this.corruptedPayload;
   }
 }

@@ -65,8 +65,33 @@ class BodyWidget extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.app.isCorruptedPayload() === true && prevProps.app.isCorruptedPayload() === false) {
+      this.props.dispatch(
+        setCanvasNotification({
+          open: true,
+          variant: 'error',
+          text: 'Unable to load corrupted scenario.'
+        })
+      );
+    }
+  }
+
   saveChanges = () => {
     const { dispatch } = this.props;
+
+    // Check for corruption to prevent override
+    if (this.props.app.isCorruptedPayload()) {
+      dispatch(
+        setCanvasNotification({
+          open: true,
+          variant: 'error',
+          text: 'Cannot modify corrupted scenario.'
+        })
+      );
+      return;
+    };
 
     const exportService = new ExportService(
       this.props.app.getDiagramEngine().getDiagramModel()
@@ -250,11 +275,14 @@ class BodyWidget extends React.Component {
                 icon={<EmailIcon />}
               />
 
-              <TrayItemWidget
-                model={{ type: 'banner' }}
-                name='Show banner'
-                icon={<BannerIcon />}
-              />
+              {config.CAMPAIGN_ENABLED &&
+                <TrayItemWidget
+                  model={{ type: 'banner' }}
+                  name='Show banner'
+                  icon={<BannerIcon />}
+                />
+              }
+              
             </List>
 
             <List

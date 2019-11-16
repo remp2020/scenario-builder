@@ -2,6 +2,7 @@ import flatMap from 'lodash/flatMap';
 
 // import the custom models
 import { Banner, Email, Segment, Trigger, Wait, Goal } from './../components/elements';
+import { CAMPAIGN_ENABLED } from './../config';
 
 function minutesToTimeUnit(minutes) {
   if (minutes % 1440 === 0) {
@@ -73,6 +74,11 @@ export class RenderService {
         return nextNodes;
       });
     } else if (element.type === 'banner') {
+
+      if (!CAMPAIGN_ENABLED) { 
+        throw Error("CAMPAIGN_ENABLED configuration is false, but loaded scenario contains banner element.");
+      }
+
       element.selectedBanner = element.banner.code;
       node = new Banner.NodeModel(element);
 

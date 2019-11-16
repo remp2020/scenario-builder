@@ -21,9 +21,12 @@ class App extends Component {
 
     dispatch(fetchSegments());
     dispatch(fetchGoals());
-    dispatch(fetchBanners());
     dispatch(fetchTriggers());
     dispatch(fetchMails());
+
+    if (config.CAMPAIGN_ENABLED) {
+      dispatch(fetchBanners());
+    }
 
     if (config.SCENARIO_ID) {
       dispatch(fetchScenario(config.SCENARIO_ID));
