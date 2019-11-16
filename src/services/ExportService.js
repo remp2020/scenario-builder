@@ -79,7 +79,7 @@ export class ExportService {
         id: node.id,
         name: node.name ? node.name : '',
         type: 'banner',
-        email: {
+        banner: {
           code: node.selectedBanner,
           descendants: this.getAllChildrenNodes(node).map(descendantNode =>
             this.formatDescendant(descendantNode, node)
