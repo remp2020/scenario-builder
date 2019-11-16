@@ -79,7 +79,7 @@ export class RenderService {
         throw Error("CAMPAIGN_ENABLED configuration is false, but loaded scenario contains banner element.");
       }
 
-      element.selectedBanner = element.banner.code;
+      element.selectedBanner = element.banner.id;
       node = new Banner.NodeModel(element);
 
       nodes = element.email.descendants.flatMap(descendantObj => {
