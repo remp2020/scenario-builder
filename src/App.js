@@ -8,6 +8,7 @@ import * as config from './config';
 import {
   fetchSegments,
   fetchGoals,
+  fetchBanners,
   fetchTriggers,
   fetchScenario,
   setScenarioName,
@@ -20,6 +21,7 @@ class App extends Component {
 
     dispatch(fetchSegments());
     dispatch(fetchGoals());
+    dispatch(fetchBanners());
     dispatch(fetchTriggers());
     dispatch(fetchMails());
 

@@ -14,7 +14,8 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import ActionIcon from '@material-ui/icons/Mail';
+import EmailIcon from '@material-ui/icons/Mail';
+import BannerIcon from '@material-ui/icons/Adjust';
 import TriggerIcon from '@material-ui/icons/Notifications';
 import WaitIcon from '@material-ui/icons/AccessAlarmsOutlined';
 import SegmentIcon from '@material-ui/icons/SubdirectoryArrowRight';
@@ -24,7 +25,7 @@ import * as config from './../../config';
 import { TrayItemWidget } from './TrayItemWidget';
 import { ExportService } from './../../services/ExportService';
 import Notification from '../Notification';
-import { Email, Segment, Trigger, Wait, Goal } from './../elements';
+import { Email, Segment, Trigger, Wait, Goal, Banner } from './../elements';
 import {
   setScenarioId,
   setScenarioName,
@@ -246,7 +247,13 @@ class BodyWidget extends React.Component {
               <TrayItemWidget
                 model={{ type: 'email' }}
                 name='Send email'
-                icon={<ActionIcon />}
+                icon={<EmailIcon />}
+              />
+
+              <TrayItemWidget
+                model={{ type: 'banner' }}
+                name='Show banner'
+                icon={<BannerIcon />}
               />
             </List>
 
@@ -301,6 +308,8 @@ class BodyWidget extends React.Component {
                 var node = null;
                 if (data.type === 'email') {
                   node = new Email.NodeModel({});
+                } else if (data.type === 'banner') {
+                  node = new Banner.NodeModel({});
                 } else if (data.type === 'segment') {
                   node = new Segment.NodeModel({});
                 } else if (data.type === 'trigger') {

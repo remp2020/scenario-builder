@@ -5,6 +5,7 @@ import CanvasReducer from './CanvasReducer';
 import ScenarioReducer from './ScenarioReducer';
 import MailsReducer from './MailsReducer';
 import GoalsReducer from './GoalsReducer';
+import BannersReducer from './BannersReducer';
 
 export default combineReducers({
   segments: SegmentsReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
   canvas: CanvasReducer,
   scenario: ScenarioReducer,
   mails: MailsReducer,
-  goals: GoalsReducer
+  goals: GoalsReducer,
+  banners: BannersReducer,
 });

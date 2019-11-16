@@ -1,7 +1,7 @@
 import flatMap from 'lodash/flatMap';
 
 // import the custom models
-import { Email, Segment, Trigger, Wait, Goal } from './../components/elements';
+import { Banner, Email, Segment, Trigger, Wait, Goal } from './../components/elements';
 
 function minutesToTimeUnit(minutes) {
   if (minutes % 1440 === 0) {
@@ -60,6 +60,21 @@ export class RenderService {
     } else if (element.type === 'email') {
       element.selectedMail = element.email.code;
       node = new Email.NodeModel(element);
+
+      nodes = element.email.descendants.flatMap(descendantObj => {
+        const element = this.payload.elements[descendantObj.uuid];
+        const visual = this.payload.visual[element.id];
+
+        const nextNodes = this.renderElements(element, visual);
+        const link = node.getPort('right').link(nextNodes[0].getPort('left'));
+
+        this.activeModel.addLink(link);
+
+        return nextNodes;
+      });
+    } else if (element.type === 'banner') {
+      element.selectedBanner = element.banner.code;
+      node = new Banner.NodeModel(element);
 
       nodes = element.email.descendants.flatMap(descendantObj => {
         const element = this.payload.elements[descendantObj.uuid];
