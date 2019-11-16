@@ -74,6 +74,18 @@ export class ExportService {
           )
         }
       };
+    } else if (node.type === 'banner') {
+      return {
+        id: node.id,
+        name: node.name ? node.name : '',
+        type: 'banner',
+        email: {
+          code: node.selectedBanner,
+          descendants: this.getAllChildrenNodes(node).map(descendantNode =>
+            this.formatDescendant(descendantNode, node)
+          )
+        }
+      };
     } else if (node.type === 'segment') {
       const descendantsPositive = this.getAllChildrenNodes(node, 'right').map(
         descendantNode => this.formatDescendant(descendantNode, node)
