@@ -29,9 +29,8 @@ export class NodeModel extends BaseNodeModel {
     return _.merge(super.serialize(), {
       name: this.name,
       selectedBanner: this.selectedBanner,
-      
       expiresInTime: this.expiresInTime,
-      expiresInUnit: this.expiresInTime,
+      expiresInUnit: this.expiresInUnit,
     });
   }
 }

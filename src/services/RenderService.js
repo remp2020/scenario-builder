@@ -86,7 +86,7 @@ export class RenderService {
       element.selectedBanner = element.banner.id;
       node = new Banner.NodeModel(element);
 
-      nodes = element.email.descendants.flatMap(descendantObj => {
+      nodes = element.banner.descendants.flatMap(descendantObj => {
         const element = this.payload.elements[descendantObj.uuid];
         const visual = this.payload.visual[element.id];
 

@@ -75,6 +75,9 @@ export class ExportService {
         }
       };
     } else if (node.type === 'banner') {
+      console.log('sending banner');
+      console.log(node.expiresInTime, node.expiresInUnit);
+
       return {
         id: node.id,
         name: node.name ? node.name : '',

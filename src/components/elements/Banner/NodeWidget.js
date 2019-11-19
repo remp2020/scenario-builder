@@ -247,6 +247,8 @@ class NodeWidget extends React.Component {
 
                 this.props.node.name = this.state.nodeFormName;
                 this.props.node.selectedBanner = this.state.selectedBanner;
+                this.props.node.expiresInTime = this.state.expiresInTime;
+                this.props.node.expiresInUnit = this.state.expiresInUnit;
 
                 this.props.diagramEngine.repaintCanvas();
                 this.closeDialog();
