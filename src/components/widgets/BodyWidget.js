@@ -337,7 +337,10 @@ class BodyWidget extends React.Component {
                 if (data.type === 'email') {
                   node = new Email.NodeModel({});
                 } else if (data.type === 'banner') {
-                  node = new Banner.NodeModel({});
+                  node = new Banner.NodeModel({
+                    expiresInUnit: 'days',
+                    expiresInTime: 1,
+                  });
                 } else if (data.type === 'segment') {
                   node = new Segment.NodeModel({});
                 } else if (data.type === 'trigger') {

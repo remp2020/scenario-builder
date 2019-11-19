@@ -9,6 +9,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import { PortWidget } from '../../widgets/PortWidget';
 import StatisticsTooltip from '../../StatisticTooltip';
@@ -22,7 +26,9 @@ class NodeWidget extends React.Component {
       nodeFormName: this.props.node.name,
       selectedBanner: this.props.node.selectedBanner,
       dialogOpened: false,
-      anchorElementForTooltip: null
+      anchorElementForTooltip: null,
+      expiresInTime: this.props.node.expiresInTime,
+      expiresInUnit: this.props.node.expiresInUnit,
     };
   }
 
@@ -181,6 +187,45 @@ class NodeWidget extends React.Component {
                   placeholder='Pick one'
                   label='Selected Banner'
                 />
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={32}>
+              <Grid item xs={6}>
+                <TextField
+                  id='expires-in-time'
+                  label='Expires in'
+                  type='number'
+                  helperText="Banner is not shown after given period"
+                  fullWidth
+                  value={this.state.expiresInTime}
+                  onChange={event => {
+                    this.setState({
+                      expiresInTime: event.target.value
+                    });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor='time-unit'>Time unit</InputLabel>
+                  <Select
+                    value={this.state.expiresInUnit}
+                    onChange={event => {
+                      this.setState({
+                        expiresInUnit: event.target.value
+                      });
+                    }}
+                    inputProps={{
+                      name: 'expires-in-unit',
+                      id: 'expires-in-unit'
+                    }}
+                  >
+                    <MenuItem value='minutes'>Minutes</MenuItem>
+                    <MenuItem value='hours'>Hours</MenuItem>
+                    <MenuItem value='days'>Days</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
             </Grid>
           </DialogContent>

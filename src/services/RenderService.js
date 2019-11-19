@@ -75,9 +75,13 @@ export class RenderService {
       });
     } else if (element.type === 'banner') {
 
-      if (!CAMPAIGN_ENABLED) { 
+      if (!CAMPAIGN_ENABLED) {
         throw Error("CAMPAIGN_ENABLED configuration is false, but loaded scenario contains banner element.");
       }
+
+      const timeUnit = minutesToTimeUnit(element.banner.expiresInMinutes);
+      element.expiresInUnit = timeUnit.unit;
+      element.expiresInTime = timeUnit.time;
 
       element.selectedBanner = element.banner.id;
       node = new Banner.NodeModel(element);

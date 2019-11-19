@@ -81,6 +81,7 @@ export class ExportService {
         type: 'banner',
         banner: {
           id: node.selectedBanner,
+          expiresInMinutes: unitTimeToMinutes(node.expiresInTime, node.expiresInUnit),
           descendants: this.getAllChildrenNodes(node).map(descendantNode =>
             this.formatDescendant(descendantNode, node)
           )
