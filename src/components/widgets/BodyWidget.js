@@ -275,7 +275,7 @@ class BodyWidget extends React.Component {
                 icon={<EmailIcon />}
               />
 
-              {config.CAMPAIGN_ENABLED &&
+              {config.BANNER_ENABLED &&
                 <TrayItemWidget
                   model={{ type: 'banner' }}
                   name='Show banner'

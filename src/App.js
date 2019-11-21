@@ -24,7 +24,7 @@ class App extends Component {
     dispatch(fetchTriggers());
     dispatch(fetchMails());
 
-    if (config.CAMPAIGN_ENABLED) {
+    if (config.BANNER_ENABLED) {
       dispatch(fetchBanners());
     }
 

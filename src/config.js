@@ -3,7 +3,7 @@
 //     AUTH_TOKEN: '',
 //     API_HOST: 'https://predplatne.dennikn.sk/api/v1',
 //     SCENARIO_ID: null
-//     CAMPAIGN_ENABLED: null
+//     BANNER_ENABLED: null
 //   }
 // };
 
@@ -16,7 +16,7 @@
 //   }
 // };
 
-export const { AUTH_TOKEN, API_HOST, SCENARIO_ID, CAMPAIGN_ENABLED } = window.Scenario.config;
+export const { AUTH_TOKEN, API_HOST, SCENARIO_ID, BANNER_ENABLED } = window.Scenario.config;
 
 export const URL_SCENARIO_DETAIL = `${API_HOST}/scenarios/info?id=`;
 export const URL_SCENARIO_CREATE = `${API_HOST}/scenarios/create`;
