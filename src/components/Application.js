@@ -1,7 +1,7 @@
 import { DiagramEngine, DiagramModel } from 'storm-react-diagrams';
 
 // import the custom models
-import { SimplePortFactory, Banner, Email, Segment, Trigger, Wait, Goal } from './elements';
+import { SimplePortFactory, Banner, Email, Segment, Trigger, Wait, Goal, Condition } from './elements';
 
 import './sass/main.scss';
 import { LinkFactory } from './elements/Link';
@@ -74,6 +74,12 @@ export class Application {
       new SimplePortFactory('banner', config => new Banner.PortModel())
     );
     this.diagramEngine.registerNodeFactory(new Banner.NodeFactory());
+
+    // Condition
+    this.diagramEngine.registerPortFactory(
+      new SimplePortFactory('condition', config => new Condition.PortModel())
+    );
+    this.diagramEngine.registerNodeFactory(new Condition.NodeFactory());
   }
 
   getActiveDiagram() {

@@ -5,3 +5,4 @@ export * from './ScenarioActions';
 export * from './MailsActions';
 export * from './GoalsActions';
 export * from './BannersActions';
+export * from './CriteriaActions';

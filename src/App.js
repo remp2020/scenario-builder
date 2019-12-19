@@ -10,6 +10,7 @@ import {
   fetchGoals,
   fetchBanners,
   fetchTriggers,
+  fetchCriteria,
   fetchScenario,
   setScenarioName,
   fetchMails
@@ -20,6 +21,7 @@ class App extends Component {
     const { dispatch } = this.props;
 
     dispatch(fetchSegments());
+    dispatch(fetchCriteria());
     dispatch(fetchGoals());
     dispatch(fetchTriggers());
     dispatch(fetchMails());

@@ -1,5 +1,7 @@
 export const SEGMENTS_CHANGED = 'segments_changed';
 
+export const CRITERIA_CHANGED = 'criteria_changed';
+
 export const TRIGGERS_CHANGED = 'triggers_changed';
 
 export const MAILS_CHANGED = 'mails_changed';

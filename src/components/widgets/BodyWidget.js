@@ -19,13 +19,14 @@ import BannerIcon from '@material-ui/icons/Adjust';
 import TriggerIcon from '@material-ui/icons/Notifications';
 import WaitIcon from '@material-ui/icons/AccessAlarmsOutlined';
 import SegmentIcon from '@material-ui/icons/SubdirectoryArrowRight';
+import ConditionIcon from '@material-ui/icons/CallSplit';
 import GoalIcon from '@material-ui/icons/CheckBox';
 
 import * as config from './../../config';
 import { TrayItemWidget } from './TrayItemWidget';
 import { ExportService } from './../../services/ExportService';
 import Notification from '../Notification';
-import { Email, Segment, Trigger, Wait, Goal, Banner } from './../elements';
+import { Email, Segment, Trigger, Wait, Goal, Banner, Condition } from './../elements';
 import {
   setScenarioId,
   setScenarioName,
@@ -298,6 +299,12 @@ class BodyWidget extends React.Component {
               />
 
               <TrayItemWidget
+                model={{ type: 'condition' }}
+                name='Condition'
+                icon={<ConditionIcon />}
+              />
+
+              <TrayItemWidget
                 model={{ type: 'wait' }}
                 name='Wait'
                 icon={<WaitIcon />}
@@ -326,13 +333,7 @@ class BodyWidget extends React.Component {
                 );
                 if (!stormDiagramNode) return;
                 var data = JSON.parse(stormDiagramNode);
-                // var nodesCount = _.keys(
-                //   this.props.app
-                //     .getDiagramEngine()
-                //     .getDiagramModel()
-                //     .getNodes()
-                // ).length;
-
+              
                 var node = null;
                 if (data.type === 'email') {
                   node = new Email.NodeModel({});
@@ -343,6 +344,8 @@ class BodyWidget extends React.Component {
                   });
                 } else if (data.type === 'segment') {
                   node = new Segment.NodeModel({});
+                } else if (data.type === 'condition') {
+                  node = new Condition.NodeModel({});
                 } else if (data.type === 'trigger') {
                   node = new Trigger.NodeModel({});
                 } else if (data.type === 'wait') {

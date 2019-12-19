@@ -1,7 +1,7 @@
 import flatMap from 'lodash/flatMap';
 
 // import the custom models
-import { Banner, Email, Segment, Trigger, Wait, Goal } from './../components/elements';
+import { Banner, Email, Segment, Trigger, Wait, Goal, Condition } from './../components/elements';
 import { BANNER_ENABLED } from './../config';
 
 function minutesToTimeUnit(minutes) {
@@ -166,11 +166,37 @@ export class RenderService {
 
         return nextNodes;
       });
-    }
+    } else if (element.type === 'condition') {
+        [node, nodes] = this.renderCondition(element);
+     }
 
     this.activeModel.addNode(node);
     node.setPosition(visual.x, visual.y);
 
     return [node, ...nodes];
+  }
+
+  renderCondition(element) {
+    // element.selectedSegment = element.segment.code;
+    let node = new Condition.NodeModel(element);
+
+    let nodes = element.segment.descendants.flatMap(descendantObj => {
+      const element = this.payload.elements[descendantObj.uuid];
+      const visual = this.payload.visual[element.id];
+      const nextNodes = this.renderElements(element, visual);
+
+      if (descendantObj.direction) {
+        if (descendantObj.direction === 'positive') {
+          const link = node.getPort('right').link(nextNodes[0].getPort('left'));
+          this.activeModel.addLink(link);
+        } else if (descendantObj.direction === 'negative') {
+          const link = node.getPort('bottom').link(nextNodes[0].getPort('left'));
+          this.activeModel.addLink(link);
+        }
+      }
+
+      return nextNodes;
+    });
+    return [node, nodes];
   }
 }
