@@ -14,14 +14,13 @@ import { emphasize } from '@material-ui/core/styles/colorManipulator';
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    // height: 250
     marginTop: '10px',
     marginBottom: '10px',
     fontFamily: 'Roboto, Helvetica, Arial, sans-serif'
   },
   input: {
     display: 'flex',
-    padding: 0
+    padding: 0,
   },
   valueContainer: {
     display: 'flex',
@@ -45,12 +44,12 @@ const styles = theme => ({
     padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
   },
   singleValue: {
-    fontSize: 16
+    fontSize: 14
   },
   placeholder: {
     position: 'absolute',
     left: 2,
-    fontSize: 16
+    fontSize: 14
   },
   paper: {
     position: 'absolute',
@@ -84,6 +83,7 @@ function Control(props) {
   return (
     <TextField
       fullWidth
+      multiline
       InputProps={{
         inputComponent,
         inputProps: {
