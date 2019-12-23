@@ -3,24 +3,26 @@ import { connect } from 'react-redux';
 import ConditionIcon from '@material-ui/icons/CallSplit';
 import OkIcon from '@material-ui/icons/Check';
 import NopeIcon from '@material-ui/icons/Close';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
+// import Grid from '@material-ui/core/Grid';
+// import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+// import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
+// import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
 import StatisticsTooltip from '../../StatisticTooltip';
 import { PortWidget } from './../../widgets/PortWidget';
 import { setCanvasZoomingAndPanning } from '../../../actions';
+import CriteriaBuilder from './CriteriaBuilder';
 
 class NodeWidget extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       nodeFormName: this.props.node.name,
+      criteria: this.props.node.name,
       dialogOpened: false,
       anchorElementForTooltip: null,
     };
@@ -139,32 +141,12 @@ class NodeWidget extends React.Component {
             }
           }}
         >
-          
-            <DialogTitle id='form-dialog-title'>Condition node</DialogTitle>
-
+            <DialogTitle id='form-dialog-title'>
+              Event Condition
+            </DialogTitle>
             <DialogContent>
-              <DialogContentText>
-                TODO condition explanation
-              </DialogContentText>
-
-              <Grid container spacing={32}>
-                <Grid item xs={6}>
-                  <TextField
-                    margin='normal'
-                    id='condition-name'
-                    label='Node name'
-                    fullWidth
-                    value={this.state.nodeFormName}
-                    onChange={event => {
-                      this.setState({
-                        nodeFormName: event.target.value
-                      });
-                    }}
-                  />
-                </Grid>
-              </Grid>
+              <CriteriaBuilder criteria={this.state.criteria}></CriteriaBuilder>
             </DialogContent>
-
           
           <DialogActions>
             <Button

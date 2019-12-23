@@ -1,10 +1,13 @@
 {
+    "plugins": ["react-hooks"],
     "extends" : "rallycoding",
     "rules": {
         "max-len": ["error", 150, 2, {
             "ignoreUrls": true,
             "ignoreComments": false
         }],
-        "no-nested-ternary": "off"
+        "no-nested-ternary": "off",
+        "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+        "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
     }
 }
