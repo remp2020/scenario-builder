@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -9,6 +9,35 @@ import AddIcon from '@material-ui/icons/AddCircleOutline';
 import { Card, CardContent, FormControl, InputLabel, Select, MenuItem, IconButton, CardMedia } from '@material-ui/core';
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+
+const BuilderDispatch = React.createContext(null);
+
+////////////////////
+// local reducer
+////////////////////
+
+function actionAddCriterion() {
+  return {type: 'ADD_CRITERION'};
+}
+
+function actionSetTable(table) {
+  return {type: 'SET_TABLE', payload: table};
+}
+
+function reducer(state, action) {
+  switch(action.type) {
+    case 'SET_TABLE':
+      return {...state, table: action.payload};
+    case 'ADD_CRITERION':
+      return {...state, nodes: [...state.nodes, {id: uuidv4(), key: null}]}
+    default:
+      throw new Error("unsupported action type " + action.type)
+  }
+}
+
+////////////////////
+// CriteriaForm
+////////////////////
 
 const useCriteriaFormStyles = makeStyles({
   card: {
@@ -25,15 +54,10 @@ const useCriteriaFormStyles = makeStyles({
   },
   formControl: {
     minWidth: '180px',
-    // flex: '0'
   },
-
-  icon: {
-    // flex: '0'
-  }
 });
 
-// Props - node, table, criteria
+// Props - node, criteria
 function CriteriaForm(props) {
   const classes = useCriteriaFormStyles();
   const [selectedCriteria, setSelectedCriteria] = React.useState('');
@@ -69,6 +93,10 @@ function CriteriaForm(props) {
   );
 }
 
+////////////////////
+// CriteriaTable
+////////////////////
+
 const useCriteriaTableStyles = makeStyles({
   andContainer: {
     display: 'flex',
@@ -79,26 +107,21 @@ const useCriteriaTableStyles = makeStyles({
   }
 });
 
-// Props - blueprint
+// Props - blueprint, nodes
 function CriteriaTable(props) {
   const classes = useCriteriaTableStyles();
-  const [nodes, setNodes] = useState([{id: uuidv4(), key: null}])
-
-  const handleClick = () => {
-    setNodes([...nodes, {id:uuidv4(), key:null}]);
-  };
+  const dispatch = useContext(BuilderDispatch);
 
   return (
     <>
-      {nodes.map((n, index) => (
-        <React.Fragment key={n.id}>
+      {props.nodes.map((node, index) => (
+        <React.Fragment key={node.id}>
           { index >= 1 &&
             <div className={classes.andContainer}>AND</div>
           }
           <Grid item xs={12}>
-            <CriteriaForm 
-              node={n}
-              table={props.blueprint.table} 
+            <CriteriaForm
+              node={node}
               criteria={props.blueprint.criteria}>
             </CriteriaForm>
           </Grid>
@@ -106,7 +129,7 @@ function CriteriaTable(props) {
       ))}
 
       <Grid item xs={12}>
-        <Button onClick={handleClick} className={classes.button} startIcon={<AddIcon />}>
+        <Button onClick={() => dispatch(actionAddCriterion())} className={classes.button} startIcon={<AddIcon />}>
           Add new criteria
         </Button>
       </Grid>
@@ -114,10 +137,11 @@ function CriteriaTable(props) {
   )
 }
 
+////////////////////
+// CriteriaBuilder
+////////////////////
+
 const useCriteriaBuilderStyles = makeStyles({
-  criteriaBox: {
-    // padding: '8px',
-  },
   selectedButton: {
     backgroundColor: "#E4E4E4"
   }, 
@@ -129,25 +153,35 @@ const useCriteriaBuilderStyles = makeStyles({
 export default function CriteriaBuilder(props) {
   const classes = useCriteriaBuilderStyles();
   const criteria = useSelector(state => state.criteria.criteria);
-  const [selectedTable, setSelectedTable] = useState(criteria[0].table)
+
+  const [state, dispatch] = useReducer(reducer, {
+    version: 1,
+    table: criteria[0].table,
+    nodes: [{id: uuidv4(), key: null}] // by default, one empty node
+  });
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <ButtonGroup aria-label="outlined button group">
-          {criteria.map(criteriaBlueprint => (
-            <Button 
-              onClick={() => setSelectedTable(criteriaBlueprint.table)}
-              className={selectedTable === criteriaBlueprint.table ? classes.selectedButton : classes.deselectedButton}
-              key={criteriaBlueprint.table}>{criteriaBlueprint.table}</Button>
-          ))}
-        </ButtonGroup>
-      </Grid>
+    <BuilderDispatch.Provider value={dispatch}>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <ButtonGroup aria-label="outlined button group">
+            {criteria.map(criteriaBlueprint => (
+              <Button 
+                onClick={() => dispatch(actionSetTable(criteriaBlueprint.table))}
+                className={state.table === criteriaBlueprint.table ? classes.selectedButton : classes.deselectedButton}
+                key={criteriaBlueprint.table}>{criteriaBlueprint.table}</Button>
+            ))}
+          </ButtonGroup>
+        </Grid>
 
-      {criteria.filter(cb => cb.table === selectedTable).map(criteriaBlueprint => (
-          <CriteriaTable key={criteriaBlueprint.table} blueprint={criteriaBlueprint}></CriteriaTable>
-        )
-      )}
-    </Grid>
+        {criteria.filter(cb => cb.table === state.table).map(criteriaBlueprint => (
+            <CriteriaTable 
+              key={criteriaBlueprint.table} 
+              blueprint={criteriaBlueprint}
+              nodes={state.nodes}></CriteriaTable>
+          )
+        )}
+      </Grid>
+    </BuilderDispatch.Provider>
   )
 }
