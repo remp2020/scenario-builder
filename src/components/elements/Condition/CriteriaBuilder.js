@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useImperativeHandle, useReducer, useContext, forwardRef } from 'react';
+import React, { useImperativeHandle, useReducer, useContext, forwardRef } from 'react';
 import { useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -6,7 +6,8 @@ import uuidv4 from 'uuid/v4';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
-import { Card, CardContent, FormControl, InputLabel, Select, MenuItem, IconButton, CardMedia } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { Card, CardContent, FormControl, InputLabel, Select, TextField, MenuItem, IconButton, CardMedia } from '@material-ui/core';
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
@@ -16,11 +17,21 @@ function emptyNode() {
   return {id: uuidv4(), key: ''};
 }
 
-////////////////////
-// local reducer
-////////////////////
+///////////////////////////
+// local reducer and state
+///////////////////////////
 
-function actionSetKeyForNode(key, nodeId) {
+function actionSetNodeValues(nodeId, values){
+  return {
+    type: 'SET_NODE_VALUES',
+    payload: {
+      values: values,
+      nodeId: nodeId,
+    }
+  }; 
+}
+
+function actionSetKeyForNode(nodeId, key) {
   return {
     type: 'SET_KEY_FOR_NODE',
     payload: {
@@ -49,6 +60,15 @@ function actionSetTable(table) {
 
 function reducer(state, action) {
   switch(action.type) {
+    case 'SET_NODE_VALUES':
+      return {...state, nodes: state.nodes.map(node => {
+        if (node.id === action.payload.nodeId) {
+          return {
+            ...node, values: action.payload.values
+          };
+        }
+        return node;
+      })};
     case 'SET_TABLE':
       // this also resets nodes state
       return {...state, nodes: [emptyNode()], table: action.payload};
@@ -57,10 +77,11 @@ function reducer(state, action) {
     case 'DELETE_NODE':
       return {...state, nodes: state.nodes.filter(n => n.id !== action.payload.nodeId)};
     case 'SET_KEY_FOR_NODE':
-      let newNodes = [...state.nodes].map(node => {
+      let newNodes = state.nodes.map(node => {
         if (action.payload.nodeId === node.id) return {
           id: node.id,
           key: action.payload.key,
+          values: [], // reset values, TODO: add default value depending on key type
         };
         return node;
       });
@@ -71,21 +92,70 @@ function reducer(state, action) {
 }
 
 ////////////////////
+// StringLabeledArrayParam
+////////////////////
+
+// TODO: rewrite to use Autocomplete getOptionSelected attribute once it's stable
+function selectedOptions(selectedValues, options) {
+  const s = new Set(selectedValues);
+  return options.filter(option => s.has(option.value));
+}
+
+// Props - node, params
+// Example:
+// node = {values: ['city_1'], key: 'type', id: '1'}
+// params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1'}]}
+function StringLabeledArrayParam(props) {
+  const dispatch = useContext(BuilderDispatch);
+  const handleChange = (event, values) => {
+    dispatch(actionSetNodeValues(props.node.id, values.map(item => item.value)))
+  };
+
+  return (
+    <Autocomplete
+        multiple
+        options={props.params.options}
+        getOptionLabel={option => option.label}
+        onChange={handleChange}
+        value={selectedOptions(props.node.values, props.params.options)}
+        renderInput={params => (
+          <TextField
+            {...params}
+            variant="standard"
+            label={props.params.label}
+            placeholder=""
+            fullWidth
+          />
+        )}
+      />
+  );
+}
+
+////////////////////
+// CriteriaParams
+////////////////////
+
+// Props - node, params
+function CriteriaParams(props) {
+  let typeParams = props.params[props.node.key];
+  switch (typeParams.type) {
+    case 'string_labeled_array':
+      return (<StringLabeledArrayParam node={props.node} params={typeParams}></StringLabeledArrayParam>);
+    default:
+      throw new Error("unsupported node type " + typeParams.type);
+  }
+}
+
+////////////////////
 // CriteriaForm
 ////////////////////
 
 const useCriteriaFormStyles = makeStyles({
-  card: {
-    // minWidth: '200px'
-  },
   cardContent: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     backgroundColor: '#F2F2F2',
-  },
-  cardContent2: {
-    backgroundColor: '#F2F2F2'
   },
   formControl: {
     minWidth: '180px',
@@ -97,12 +167,8 @@ function CriteriaForm(props) {
   const classes = useCriteriaFormStyles();
   const dispatch = useContext(BuilderDispatch);
 
-  const handleChange = event => {
-    dispatch(actionSetKeyForNode(event.target.value, props.node.id));
-  };
-
   return (
-    <Card className={classes.card}>
+    <Card>
       <CardContent className={classes.cardContent}>
         <FormControl className={classes.formControl}>
           <InputLabel id="select-criteria-label">Criteria</InputLabel>
@@ -111,7 +177,7 @@ function CriteriaForm(props) {
             id="select-criteria"
             placeholder="Select criteria"
             value={props.node.key}
-            onChange={handleChange}
+            onChange={e => dispatch(actionSetKeyForNode(props.node.id, e.target.value))}
           >
             {props.criteria.map(cr => (
               <MenuItem key={cr.key} value={cr.key}>{cr.label}</MenuItem>
@@ -126,8 +192,14 @@ function CriteriaForm(props) {
         </IconButton>
       </CardContent>
 
-      {/* <CardContent className={classes.cardContent2}>
-      </CardContent> */}
+      { props.node.key &&
+        <CardContent>
+          <CriteriaParams 
+            node={props.node} 
+            params={props.criteria.filter(cr => cr.key === props.node.key)[0].params}>
+          </CriteriaParams>
+        </CardContent>
+      }
     </Card>
   );
 }
