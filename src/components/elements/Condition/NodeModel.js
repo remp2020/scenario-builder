@@ -7,6 +7,7 @@ export class NodeModel extends BaseNodeModel {
     super('condition', element.id);
 
     this.name = element.name;
+    this.conditions = element.conditions;
 
     this.addPort(new PortModel('left'));
     this.addPort(new PortModel('bottom'));
@@ -16,11 +17,13 @@ export class NodeModel extends BaseNodeModel {
   deSerialize(ob, engine) {
     super.deSerialize(ob, engine);
     this.name = ob.name;
+    this.conditions = ob.conditions;
   }
 
   serialize() {
     return _.merge(super.serialize(), {
       name: this.name,
+      conditions: this.conditions,
     });
   }
 }

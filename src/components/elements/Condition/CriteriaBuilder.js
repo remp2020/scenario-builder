@@ -7,9 +7,9 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Card, CardContent, FormControl, InputLabel, Select, TextField, MenuItem, IconButton, CardMedia } from '@material-ui/core';
+import { Card, CardContent, FormControl, InputLabel, Select, TextField, MenuItem, IconButton } from '@material-ui/core';
 
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 const BuilderDispatch = React.createContext(null);
 
@@ -269,7 +269,7 @@ function CriteriaBuilder(props, ref) {
     version: 1,
     table: criteria[0].table,
     nodes: [emptyNode()] // by default, one empty node
-  });
+  , ...props.conditions});
 
   // expose state to outer node
   useImperativeHandle(ref, () => ({
@@ -278,7 +278,7 @@ function CriteriaBuilder(props, ref) {
 
   return (
     <BuilderDispatch.Provider value={dispatch}>
-      <Grid container spacing={3}>
+      <Grid container item xs={12} spacing={3}>
         <Grid item xs={12}>
           <ButtonGroup aria-label="outlined button group">
             {criteria.map(criteriaBlueprint => (

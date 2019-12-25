@@ -56,9 +56,18 @@ export class ExportService {
         nextNode = this.model.links[link].sourcePort.parent;
       }
 
-      // return this.formatNode(nextNode.serialize(), model);
       return { ...nextNode.serialize(), portName };
     });
+  }
+
+  getPositiveAndNegativeDescendants(node) {
+    const descendantsPositive = this.getAllChildrenNodes(node, 'right').map(
+      descendantNode => this.formatDescendant(descendantNode, node)
+    );
+    const descendantsNegative = this.getAllChildrenNodes(node, 'bottom').map(
+      descendantNode => this.formatDescendant(descendantNode, node)
+    );
+    return [...descendantsPositive, ...descendantsNegative];
   }
 
   formatNode(node) {
@@ -75,9 +84,6 @@ export class ExportService {
         }
       };
     } else if (node.type === 'banner') {
-      console.log('sending banner');
-      console.log(node.expiresInTime, node.expiresInUnit);
-
       return {
         id: node.id,
         name: node.name ? node.name : '',
@@ -90,20 +96,24 @@ export class ExportService {
           )
         }
       };
+    } else if (node.type === 'condition') {
+      return {
+        id: node.id,
+        name: node.name ? node.name : '',
+        type: 'condition',
+        condition: {
+          conditions: node.conditions,
+          descendants: this.getPositiveAndNegativeDescendants(node),
+        }
+      };
     } else if (node.type === 'segment') {
-      const descendantsPositive = this.getAllChildrenNodes(node, 'right').map(
-        descendantNode => this.formatDescendant(descendantNode, node)
-      );
-      const descendantsNegative = this.getAllChildrenNodes(node, 'bottom').map(
-        descendantNode => this.formatDescendant(descendantNode, node)
-      );
       return {
         id: node.id,
         name: node.name ? node.name : '',
         type: 'segment',
         segment: {
           code: node.selectedSegment ? node.selectedSegment : 'all_users',
-          descendants: [...descendantsPositive, ...descendantsNegative]
+          descendants: this.getPositiveAndNegativeDescendants(node),
         }
       };
     } else if (node.type === 'trigger') {
@@ -114,7 +124,6 @@ export class ExportService {
         event: {
           code: node.selectedTrigger ? node.selectedTrigger : 'user_created'
         },
-        // elements: this.getAllChildrenNodes(node).map((descendantNode) => this.formatDescendant(descendantNode, node))
         elements: this.getAllChildrenNodes(node).map(
           descendantNode => descendantNode.id
         )
@@ -132,16 +141,9 @@ export class ExportService {
         }
       };
     } else if (node.type === 'goal') {
-      const descendantsPositive = this.getAllChildrenNodes(node, 'right').map(
-        descendantNode => this.formatDescendant(descendantNode, node)
-      );
-      const descendantsNegative = this.getAllChildrenNodes(node, 'bottom').map(
-        descendantNode => this.formatDescendant(descendantNode, node)
-      );
-
       let goalProperties = {
         codes: node.selectedGoals ? node.selectedGoals : [],
-        descendants: [...descendantsPositive, ...descendantsNegative],
+        descendants: this.getPositiveAndNegativeDescendants(node),
         recheckPeriodMinutes: unitTimeToMinutes(node.recheckPeriodTime, node.recheckPeriodUnit)
       };
 
@@ -171,4 +173,6 @@ export class ExportService {
 
     return descendant;
   };
+
+  
 }

@@ -1,7 +1,7 @@
 $nodeColor: $orange;
 
 .srd-node--selected {
-  .diamond-node.segment-node .node-container {
+  .diamond-node.condition-node .node-container {
     box-shadow: 0 0 10px $nodeColor;
   }
 }
