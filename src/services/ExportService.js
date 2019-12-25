@@ -169,6 +169,8 @@ export class ExportService {
       descendant.direction = node.portName === 'right' ? 'positive' : 'negative';
     } else if (parentNode.type === 'goal') {
       descendant.direction = node.portName === 'right' ? 'positive' : 'negative';
+    } else if (parentNode.type === 'condition') {
+      descendant.direction = node.portName === 'right' ? 'positive' : 'negative';
     }
 
     return descendant;

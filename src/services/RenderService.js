@@ -177,10 +177,12 @@ export class RenderService {
   }
 
   renderCondition(element) {
-    // element.selectedSegment = element.segment.code;
-    let node = new Condition.NodeModel(element);
+    let node = new Condition.NodeModel({
+      name: element.name,
+      conditions: element.condition.conditions
+    });
 
-    let nodes = element.segment.descendants.flatMap(descendantObj => {
+    let nodes = element.condition.descendants.flatMap(descendantObj => {
       const element = this.payload.elements[descendantObj.uuid];
       const visual = this.payload.visual[element.id];
       const nextNodes = this.renderElements(element, visual);
