@@ -54,8 +54,8 @@ function actionAddCriterion() {
   return {type: 'ADD_CRITERION'};
 }
 
-function actionSetTable(table) {
-  return {type: 'SET_TABLE', payload: table};
+function actionSetEvent(event) {
+  return {type: 'SET_EVENT', payload: event};
 }
 
 function reducer(state, action) {
@@ -69,9 +69,9 @@ function reducer(state, action) {
         }
         return node;
       })};
-    case 'SET_TABLE':
+    case 'SET_EVENT':
       // this also resets nodes state
-      return {...state, nodes: [emptyNode()], table: action.payload};
+      return {...state, nodes: [emptyNode()], event: action.payload};
     case 'ADD_CRITERION':
       return {...state, nodes: [...state.nodes, emptyNode()]};
     case 'DELETE_NODE':
@@ -267,7 +267,7 @@ function CriteriaBuilder(props, ref) {
 
   const [state, dispatch] = useReducer(reducer, {
     version: 1,
-    table: criteria[0].table,
+    event: criteria[0].event,
     nodes: [emptyNode()] // by default, one empty node
   , ...props.conditions});
 
@@ -283,16 +283,16 @@ function CriteriaBuilder(props, ref) {
           <ButtonGroup aria-label="outlined button group">
             {criteria.map(criteriaBlueprint => (
               <Button 
-                onClick={() => dispatch(actionSetTable(criteriaBlueprint.table))}
-                className={state.table === criteriaBlueprint.table ? classes.selectedButton : classes.deselectedButton}
-                key={criteriaBlueprint.table}>{criteriaBlueprint.table}</Button>
+                onClick={() => dispatch(actionSetEvent(criteriaBlueprint.event))}
+                className={state.event === criteriaBlueprint.event ? classes.selectedButton : classes.deselectedButton}
+                key={criteriaBlueprint.event}>{criteriaBlueprint.event}</Button>
             ))}
           </ButtonGroup>
         </Grid>
 
-        {criteria.filter(cb => cb.table === state.table).map(criteriaBlueprint => (
+        {criteria.filter(cb => cb.event === state.event).map(criteriaBlueprint => (
             <CriteriaTable 
-              key={criteriaBlueprint.table} 
+              key={criteriaBlueprint.event} 
               blueprint={criteriaBlueprint}
               nodes={state.nodes}></CriteriaTable>
           )
