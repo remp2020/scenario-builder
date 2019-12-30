@@ -272,7 +272,7 @@ class NodeWidget extends React.Component {
                     />
                   </Grid>
                   {window.RempSegmenter && (
-                    <Grid item xs={4}>
+                    <Grid item xs={4} style={{textAlign: 'right', paddingBottom: '4px'}}>
                       <Button
                         variant='contained'
                         color='primary'
