@@ -12,7 +12,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { PortWidget } from './../../widgets/PortWidget';
 import MaterialSelect from '../../MaterialSelect';
-import StatisticsTooltip from '../../StatisticTooltip';
+// import StatisticsTooltip from '../../StatisticTooltip';
 import { setCanvasZoomingAndPanning } from '../../../actions';
 
 class NodeWidget extends React.Component {

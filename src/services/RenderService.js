@@ -178,6 +178,7 @@ export class RenderService {
 
   renderCondition(element) {
     let node = new Condition.NodeModel({
+      id: element.id,
       name: element.name,
       conditions: element.condition.conditions
     });
