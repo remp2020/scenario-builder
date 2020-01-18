@@ -94,6 +94,20 @@ function reducer(state, action) {
 ////////////////////
 // StringLabeledArrayParam
 ////////////////////
+const useStringLabeledArrayParamStyles = makeStyles(theme => ({
+  chipRoot: props => ({
+    "&:not(:first-child)": {
+      "&::before": {
+        content: "'" + props.operator + "'",
+        textTransform: 'uppercase',
+        position: 'absolute',
+        left: '-20px',
+      },
+      marginLeft: '20px'
+    },
+    position: 'relative'
+  })
+}));
 
 // TODO: rewrite to use Autocomplete getOptionSelected attribute once it's stable
 function selectedOptions(selectedValues, options) {
@@ -103,21 +117,30 @@ function selectedOptions(selectedValues, options) {
 
 // Props - node, params
 // Example:
-// node = {values: ['city_1'], key: 'type', id: '1'}
-// params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1'}]}
+// node = {values: {selection: ['city_1'], operator: 'or'}, key: 'type', id: '1'}
+// params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1'}], operator: 'or'}
 function StringLabeledArrayParam(props) {
   const dispatch = useContext(BuilderDispatch);
+  const classes = useStringLabeledArrayParamStyles({operator: props.params.operator});
   const handleChange = (event, values) => {
-    dispatch(actionSetNodeValues(props.node.id, values.map(item => item.value)))
+    dispatch(actionSetNodeValues(props.node.id, {
+      operator: props.params.operator, // TODO add ability to change operator
+      selection: values.map(item => item.value)
+    }));
   };
 
   return (
     <Autocomplete
         multiple
+        ChipProps={{
+          classes: {
+            root: classes.chipRoot
+          }
+        }}
         options={props.params.options}
         getOptionLabel={option => option.label}
         onChange={handleChange}
-        value={selectedOptions(props.node.values, props.params.options)}
+        value={selectedOptions(props.node.values.selection, props.params.options)}
         renderInput={params => (
           <TextField
             {...params}
