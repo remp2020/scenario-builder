@@ -26,4 +26,5 @@ export const URL_TRIGGERS_INDEX = `${API_HOST}/events/list`;
 export const URL_MAILS_INDEX = `${API_HOST}/mail-template/list`;
 export const URL_GOALS_INDEX = `${API_HOST}/onboarding-goals/list`;
 export const URL_BANNERS_INDEX = `${API_HOST}/remp/list-banners`;
-export const URL_TOOLTIPS = `${API_HOST}/scenarios/element`;
+export const URL_ELEMENT_TOOLTIP = `${API_HOST}/scenarios/element`;
+export const URL_TRIGGER_TOOLTIP = `${API_HOST}/scenarios/trigger`;

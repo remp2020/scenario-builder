@@ -29,14 +29,14 @@ class StatisticsTooltip extends React.Component {
   }
 
   fetchStatistics() {
-    const { dispatch, id, scenarioID } = this.props;
+    const { dispatch, id, scenarioID, isTrigger } = this.props;
     if (!scenarioID) return;
+
+    let url = isTrigger ? `${config.URL_TRIGGER_TOOLTIP}?trigger_uuid=${id}` : `${config.URL_ELEMENT_TOOLTIP}?element_uuid=${id}`; 
 
     this.setState({ loading: true });
     axios
-      .get(
-        `${config.URL_TOOLTIPS}?scenario_id=${scenarioID}&element_uuid=${id}`
-      )
+      .get(url)
       .then(({ data }) => {
         this.setState({ html: data.html });
       })
@@ -64,7 +64,6 @@ class StatisticsTooltip extends React.Component {
       <Popover
         open={Boolean(anchorElement)}
         anchorEl={anchorElement}
-        // onEnter={() => console.log('opened?')}
         style={{ pointerEvents: 'none' }}
         anchorOrigin={{
           vertical: 'bottom',

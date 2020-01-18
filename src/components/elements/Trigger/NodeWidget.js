@@ -12,7 +12,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { PortWidget } from './../../widgets/PortWidget';
 import MaterialSelect from '../../MaterialSelect';
-// import StatisticsTooltip from '../../StatisticTooltip';
+import StatisticsTooltip from '../../StatisticTooltip';
 import { setCanvasZoomingAndPanning } from '../../../actions';
 
 class NodeWidget extends React.Component {
@@ -114,11 +114,11 @@ class NodeWidget extends React.Component {
           </div>
         </div>
 
-        {/* TODO: fix tooltip in triggers */}
-        {/* <StatisticsTooltip
+        <StatisticsTooltip
           id={this.props.node.id}
+          isTrigger={true}
           anchorElement={this.state.anchorElementForTooltip}
-        /> */}
+        />
 
         <Dialog
           open={this.state.dialogOpened}
