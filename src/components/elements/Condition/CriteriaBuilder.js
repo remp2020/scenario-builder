@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import uuidv4 from 'uuid/v4';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
@@ -92,9 +94,37 @@ function reducer(state, action) {
 }
 
 ////////////////////
+// BooleanParam
+////////////////////
+
+// Props - node, params
+// Example:
+// node = {values: {selection: true}, key: 'type', id: '1'}
+// params = {label: 'Is recurrent', type: 'boolean'}
+function BooleanParam(props) {
+  const dispatch = useContext(BuilderDispatch);
+
+  const handleChange = (event) => {
+    dispatch(actionSetNodeValues(props.node.id, {
+      selection: event.target.checked
+    }));
+  };
+
+  return (
+    <FormControlLabel
+        onChange={handleChange}
+        control={<Switch />}
+        checked={props.node.values.selection}
+        label={props.params.label}
+      />
+  );
+}
+
+////////////////////
 // StringLabeledArrayParam
 ////////////////////
 const useStringLabeledArrayParamStyles = makeStyles(theme => ({
+  // Puts OR/AND between tags
   chipRoot: props => ({
     "&:not(:first-child)": {
       "&::before": {
@@ -164,6 +194,8 @@ function CriteriaParams(props) {
   switch (typeParams.type) {
     case 'string_labeled_array':
       return (<StringLabeledArrayParam node={props.node} params={typeParams}></StringLabeledArrayParam>);
+    case 'boolean':
+      return (<BooleanParam node={props.node} params={typeParams}></BooleanParam>);
     default:
       throw new Error("unsupported node type " + typeParams.type);
   }
