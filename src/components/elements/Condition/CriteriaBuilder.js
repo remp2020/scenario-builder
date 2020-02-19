@@ -2,187 +2,16 @@ import React, { useImperativeHandle, useReducer, useContext, forwardRef } from '
 import { useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import uuidv4 from 'uuid/v4';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Card, CardContent, FormControl, InputLabel, Select, TextField, MenuItem, IconButton } from '@material-ui/core';
-
+import { Card, CardContent, FormControl, InputLabel, Select, MenuItem, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import StringLabeledArrayParam from './CriteriaTypes/StringLabeledArrayParam';
+import BooleanParam from './CriteriaTypes/BooleanParam';
+import { emptyNode, reducer, actionSetEvent, actionSetKeyForNode, actionAddCriterion, actionDeleteNode } from './criteriaReducer';
 
 const BuilderDispatch = React.createContext(null);
-
-function emptyNode() {
-  return {id: uuidv4(), key: ''};
-}
-
-///////////////////////////
-// local reducer and state
-///////////////////////////
-
-function actionSetNodeValues(nodeId, values){
-  return {
-    type: 'SET_NODE_VALUES',
-    payload: {
-      values: values,
-      nodeId: nodeId,
-    }
-  }; 
-}
-
-function actionSetKeyForNode(nodeId, key) {
-  return {
-    type: 'SET_KEY_FOR_NODE',
-    payload: {
-      key: key,
-      nodeId: nodeId,
-    }
-  }; 
-}
-
-function actionDeleteNode(nodeId) {
-  return {
-    type: 'DELETE_NODE',
-    payload: {
-      nodeId: nodeId,
-    }
-  }; 
-}
-
-function actionAddCriterion() {
-  return {type: 'ADD_CRITERION'};
-}
-
-function actionSetEvent(event) {
-  return {type: 'SET_EVENT', payload: event};
-}
-
-function reducer(state, action) {
-  switch(action.type) {
-    case 'SET_NODE_VALUES':
-      return {...state, nodes: state.nodes.map(node => {
-        if (node.id === action.payload.nodeId) {
-          return {
-            ...node, values: action.payload.values
-          };
-        }
-        return node;
-      })};
-    case 'SET_EVENT':
-      // this also resets nodes state
-      return {...state, nodes: [emptyNode()], event: action.payload};
-    case 'ADD_CRITERION':
-      return {...state, nodes: [...state.nodes, emptyNode()]};
-    case 'DELETE_NODE':
-      return {...state, nodes: state.nodes.filter(n => n.id !== action.payload.nodeId)};
-    case 'SET_KEY_FOR_NODE':
-      let newNodes = state.nodes.map(node => {
-        if (action.payload.nodeId === node.id) return {
-          id: node.id,
-          key: action.payload.key,
-          values: [], // reset values, TODO: add default value depending on key type
-        };
-        return node;
-      });
-      return {...state, nodes: newNodes};
-    default:
-      throw new Error("unsupported action type " + action.type)
-  }
-}
-
-////////////////////
-// BooleanParam
-////////////////////
-
-// Props - node, params
-// Example:
-// node = {values: {selection: true}, key: 'type', id: '1'}
-// params = {label: 'Is recurrent', type: 'boolean'}
-function BooleanParam(props) {
-  const dispatch = useContext(BuilderDispatch);
-
-  const handleChange = (event) => {
-    dispatch(actionSetNodeValues(props.node.id, {
-      selection: event.target.checked
-    }));
-  };
-
-  return (
-    <FormControlLabel
-        onChange={handleChange}
-        control={<Switch />}
-        checked={props.node.values.selection}
-        label={props.params.label}
-      />
-  );
-}
-
-////////////////////
-// StringLabeledArrayParam
-////////////////////
-const useStringLabeledArrayParamStyles = makeStyles(theme => ({
-  // Puts OR/AND between tags
-  chipRoot: props => ({
-    "&:not(:first-child)": {
-      "&::before": {
-        content: "'" + props.operator + "'",
-        textTransform: 'uppercase',
-        position: 'absolute',
-        left: '-20px',
-      },
-      marginLeft: '20px'
-    },
-    position: 'relative'
-  })
-}));
-
-// TODO: rewrite to use Autocomplete getOptionSelected attribute once it's stable
-function selectedOptions(selectedValues, options) {
-  const s = new Set(selectedValues);
-  return options.filter(option => s.has(option.value));
-}
-
-// Props - node, params
-// Example:
-// node = {values: {selection: ['city_1'], operator: 'or'}, key: 'type', id: '1'}
-// params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1'}], operator: 'or'}
-function StringLabeledArrayParam(props) {
-  const dispatch = useContext(BuilderDispatch);
-  const classes = useStringLabeledArrayParamStyles({operator: props.params.operator});
-  const handleChange = (event, values) => {
-    dispatch(actionSetNodeValues(props.node.id, {
-      operator: props.params.operator, // TODO add ability to change operator
-      selection: values.map(item => item.value)
-    }));
-  };
-
-  return (
-    <Autocomplete
-        multiple
-        ChipProps={{
-          classes: {
-            root: classes.chipRoot
-          }
-        }}
-        options={props.params.options}
-        getOptionLabel={option => option.label}
-        onChange={handleChange}
-        value={selectedOptions(props.node.values.selection, props.params.options)}
-        renderInput={params => (
-          <TextField
-            {...params}
-            variant="standard"
-            label={props.params.label}
-            placeholder=""
-            fullWidth
-          />
-        )}
-      />
-  );
-}
 
 ////////////////////
 // CriteriaParams
@@ -190,12 +19,13 @@ function StringLabeledArrayParam(props) {
 
 // Props - node, params
 function CriteriaParams(props) {
+  const dispatch = useContext(BuilderDispatch);
   let typeParams = props.params[props.node.key];
   switch (typeParams.type) {
     case 'string_labeled_array':
-      return (<StringLabeledArrayParam node={props.node} params={typeParams}></StringLabeledArrayParam>);
+      return (<StringLabeledArrayParam node={props.node} params={typeParams} dispatch={dispatch}></StringLabeledArrayParam>);
     case 'boolean':
-      return (<BooleanParam node={props.node} params={typeParams}></BooleanParam>);
+      return (<BooleanParam node={props.node} params={typeParams} dispatch={dispatch}></BooleanParam>);
     default:
       throw new Error("unsupported node type " + typeParams.type);
   }
