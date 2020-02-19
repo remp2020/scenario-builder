@@ -5,7 +5,7 @@ import { TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { actionSetNodeValues } from '../criteriaReducer';
 
-const useStringLabeledArrayParamStyles = makeStyles(theme => ({
+const elementStyles = makeStyles(theme => ({
   // Puts visually OR/AND between tags
   chipRoot: props => ({
     "&:not(:first-child)": {
@@ -21,18 +21,44 @@ const useStringLabeledArrayParamStyles = makeStyles(theme => ({
   })
 }));
 
-// TODO: rewrite to use Autocomplete getOptionSelected attribute once it's stable
 function selectedOptions(selectedValues, options) {
   const s = new Set(selectedValues);
-  return options.filter(option => s.has(option.value));
+  let selected = options.filter(option => {
+    let has = s.has(option.value);
+    if (has) {
+      // for free-solo mode
+      s.delete(option.value);
+    }
+    return has;
+  });
+  // If free solo mode is enabled, there might be additional selected values (outside of options), add them as well
+  return selected.concat([...s]);
+}
+
+function optionLabel(option) {
+  if (typeof(option) === 'string') {
+    // free-solo value
+    return option;
+  } else {
+    // predefined option value
+    return option.label;
+  }
 }
 
 export default function StringLabeledArrayParam(props) {
-  const classes = useStringLabeledArrayParamStyles({operator: props.params.operator});
+  const classes = elementStyles({operator: props.params.operator});
   const handleChange = (event, values) => {
     props.dispatch(actionSetNodeValues(props.node.id, {
       operator: props.params.operator, // TODO add ability to change operator
-      selection: values.map(item => item.value)
+      selection: values.map(item => {
+        if (typeof(item) === 'string') {
+          // free-solo value
+          return item;
+        } else {
+          // predefined option value
+          return item.value;
+        }
+      })
     }));
   };
 
@@ -45,9 +71,10 @@ export default function StringLabeledArrayParam(props) {
           }
         }}
         options={props.params.options}
-        getOptionLabel={option => option.label}
+        getOptionLabel={optionLabel}
         onChange={handleChange}
         value={selectedOptions(props.node.values.selection, props.params.options)}
+        freeSolo={props.params.freeSolo}
         renderInput={params => (
           <TextField
             {...params}
@@ -64,7 +91,7 @@ export default function StringLabeledArrayParam(props) {
 StringLabeledArrayParam.propTypes = {
   // node = {values: {selection: ['city_1'], operator: 'or'}, key: 'type', id: '1'}
   node: PropTypes.object.isRequired,
-  // params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1'}], operator: 'or'}
+  // params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1'}], operator: 'or', freeSolo: true}
   params: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
