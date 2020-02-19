@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { actionSetNodeValues } from '../criteriaReducer';
 
 const useStringLabeledArrayParamStyles = makeStyles(theme => ({
-  // Puts OR/AND between tags
+  // Puts visually OR/AND between tags
   chipRoot: props => ({
     "&:not(:first-child)": {
       "&::before": {
@@ -26,10 +27,6 @@ function selectedOptions(selectedValues, options) {
   return options.filter(option => s.has(option.value));
 }
 
-// Props - node, params, dispatch
-// Example:
-// node = {values: {selection: ['city_1'], operator: 'or'}, key: 'type', id: '1'}
-// params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1'}], operator: 'or'}
 export default function StringLabeledArrayParam(props) {
   const classes = useStringLabeledArrayParamStyles({operator: props.params.operator});
   const handleChange = (event, values) => {
@@ -63,3 +60,11 @@ export default function StringLabeledArrayParam(props) {
       />
   );
 }
+
+StringLabeledArrayParam.propTypes = {
+  // node = {values: {selection: ['city_1'], operator: 'or'}, key: 'type', id: '1'}
+  node: PropTypes.object.isRequired,
+  // params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1'}], operator: 'or'}
+  params: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
+};
