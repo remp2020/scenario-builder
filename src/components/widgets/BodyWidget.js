@@ -209,7 +209,7 @@ class BodyWidget extends React.Component {
                         value={this.state.editedName}
                         onChange={this.handleNameTyping}
                         onKeyDown={this.handleCloseAndSaveDuringChangingName}
-                        onBlur={this.cancelEditingName}
+                        onBlur={this.submitEditingName}
                         className='changing-name-input'
                       />
                     ) : (
