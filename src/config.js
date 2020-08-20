@@ -21,7 +21,7 @@ export const { AUTH_TOKEN, API_HOST, SCENARIO_ID, BANNER_ENABLED } = window.Scen
 export const URL_SCENARIO_DETAIL = `${API_HOST}/scenarios/info?id=`;
 export const URL_SCENARIO_CREATE = `${API_HOST}/scenarios/create`;
 export const URL_SCENARIO_CRITERIA = `${API_HOST}/scenarios/criteria`;
-export const URL_SEGMENTS_INDEX = `${API_HOST}/user-segments/list`;
+export const URL_SEGMENTS_INDEX = `${API_HOST}/segments/list`;
 export const URL_TRIGGERS_INDEX = `${API_HOST}/events/list`;
 export const URL_MAILS_INDEX = `${API_HOST}/mail-template/list`;
 export const URL_GOALS_INDEX = `${API_HOST}/onboarding-goals/list`;

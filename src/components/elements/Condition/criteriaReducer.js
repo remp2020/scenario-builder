@@ -93,6 +93,6 @@ export function reducer(state, action) {
 				...state, nodes: newNodes
 			};
 		default:
-			throw new Error("unsupported action type " + action.type)
+			throw new Error("unsupported action type " + action.type);
 	}
 }

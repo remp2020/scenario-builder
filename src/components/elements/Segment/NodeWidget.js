@@ -12,14 +12,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Icon from '@material-ui/core/Icon';
-import groupBy from 'lodash/groupBy';
-
 import StatisticsTooltip from '../../StatisticTooltip';
-import { PortWidget } from './../../widgets/PortWidget';
-import MaterialSelect from '../../MaterialSelect';
+import { PortWidget } from '../../widgets/PortWidget';
 import { setCanvasZoomingAndPanning } from '../../../actions';
 import SegmenterService from '../../../services/SegmenterService';
 import { fetchSegments } from '../../../actions';
+import SegmentSelector from './SegmentSelector';
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -29,7 +27,8 @@ class NodeWidget extends React.Component {
       selectedSegment: this.props.node.selectedSegment,
       dialogOpened: false,
       anchorElementForTooltip: null,
-      creatingNewSegment: false
+      creatingNewSegment: false,
+      selectedSegmentSourceTable: null
     };
   }
 
@@ -63,33 +62,6 @@ class NodeWidget extends React.Component {
     this.props.dispatch(setCanvasZoomingAndPanning(true));
   };
 
-  // maybe refactor to more effective way if is a problem
-  transformOptionsForSelect = () => {
-    const lodashGrouped = groupBy(
-      this.props.segments,
-      segment => segment.group.name
-    );
-
-    const properlyGrouped = [];
-
-    Object.keys(lodashGrouped).forEach(key => {
-      properlyGrouped.push({
-        label: key,
-        sorting: lodashGrouped[key][0].group.sorting,
-        options: lodashGrouped[key].map(segment => ({
-          value: segment.code,
-          label: segment.name
-        }))
-      });
-    });
-
-    const properlyGroupedSorted = properlyGrouped.sort((a, b) => {
-      return a.sorting - b.sorting;
-    });
-
-    return properlyGroupedSorted;
-  };
-
   handleNodeMouseEnter = event => {
     if (!this.state.dialogOpened) {
       this.setState({ anchorElementForTooltip: event.currentTarget });
@@ -100,22 +72,26 @@ class NodeWidget extends React.Component {
     this.setState({ anchorElementForTooltip: null });
   };
 
-  getFormatedValue = () => {
-    const match = this.props.segments.find(segment => {
-      return segment.code === this.state.selectedSegment;
-    });
+  actionSetTable = table => {
+    if (this.state.selectedSegmentSourceTable !== table) {
+      this.setState({selectedSegment: null});
+      this.setState({selectedSegmentSourceTable: table});
+    }
+  };
 
-    return match
-      ? {
-          value: match.code,
-          label: match.name
-        }
-      : {};
+  segmentSelectedChange = segment => {
+    let value = null;
+    if (segment && segment.hasOwnProperty('code')) {
+      value = segment.code;
+    }
+
+    this.setState({selectedSegment: value});
   };
 
   getSelectedSegmentValue = () => {
-    const selected = this.props.segments.find(
-      segment => segment.code === this.props.node.selectedSegment
+    const selected = this.props.segments.flatMap(
+      item => item.segments).find(
+        segment => segment.code === this.props.node.selectedSegment
     );
 
     return selected ? ` - ${selected.name}` : '';
@@ -239,7 +215,7 @@ class NodeWidget extends React.Component {
                   new one.
                 </DialogContentText>
 
-                <Grid container spacing={32}>
+                <Grid container spacing={3}>
                   <Grid item xs={6}>
                     <TextField
                       margin='normal'
@@ -256,20 +232,15 @@ class NodeWidget extends React.Component {
                   </Grid>
                 </Grid>
 
-                <Grid container spacing={32} alignItems='flex-end'>
+                <Grid container spacing={3} alignItems='flex-end'>
                   <Grid item xs={8}>
-                    <MaterialSelect
-                      options={this.transformOptionsForSelect()}
-                      value={this.getFormatedValue()}
-                      onChange={event => {
-                        console.log(event.value);
-                        this.setState({
-                          selectedSegment: event.value
-                        });
-                      }}
-                      placeholder='Pick one'
-                      label='Selected Segment'
-                    />
+                    <SegmentSelector
+                        selectedSegment={this.state.selectedSegment}
+                        selectedSegmentSourceTable={this.state.selectedSegmentSourceTable}
+                        onSegmentTypeButtonClick={this.actionSetTable}
+                        onSegmentSelectedChange={this.segmentSelectedChange}
+                    >
+                    </SegmentSelector>
                   </Grid>
                   {window.RempSegmenter && (
                     <Grid item xs={4} style={{textAlign: 'right', paddingBottom: '4px'}}>

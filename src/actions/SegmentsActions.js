@@ -18,7 +18,7 @@ export function fetchSegments() {
     return axios
       .get(`${config.URL_SEGMENTS_INDEX}`)
       .then(response => {
-        dispatch(updateSegments(response.data.segments));
+        dispatch(updateSegments(response.data.result));
         dispatch(setScenarioLoading(false));
       })
       .catch(error => {
