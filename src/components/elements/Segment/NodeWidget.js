@@ -15,9 +15,8 @@ import Icon from '@material-ui/core/Icon';
 import StatisticsTooltip from '../../StatisticTooltip';
 import { PortWidget } from '../../widgets/PortWidget';
 import { setCanvasZoomingAndPanning } from '../../../actions';
-import SegmenterService from '../../../services/SegmenterService';
-import { fetchSegments } from '../../../actions';
 import SegmentSelector from './SegmentSelector';
+import * as config from '../../../config';
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -98,33 +97,7 @@ class NodeWidget extends React.Component {
   };
 
   handleNewSegmentClick = () => {
-    window.addEventListener('savedSegment', this.handleSavedNewSegment);
-    window.addEventListener('canceledNewSegment', this.handleCancelNewSegment);
-    this.setState({ creatingNewSegment: true });
-    setTimeout(() => {
-      SegmenterService.init();
-    });
-  };
-
-  handleSavedNewSegment = event => {
-    this.props.dispatch(fetchSegments());
-    this.setState({
-      selectedSegment: event.detail.code,
-      creatingNewSegment: false
-    });
-    this.props.node.name = this.state.nodeFormName;
-    this.props.node.selectedSegment = this.state.selectedSegment;
-    this.props.diagramEngine.repaintCanvas();
-    this.closeDialog();
-    window.removeEventListener('savedSegment', this.handleSavedNewSegment);
-  };
-
-  handleCancelNewSegment = event => {
-    this.setState({ creatingNewSegment: false });
-    window.removeEventListener(
-      'canceledNewSegment',
-      this.handleSavedNewSegment
-    );
+    window.open(config.URL_SEGMENT_NEW);
   };
 
   render() {
@@ -199,104 +172,85 @@ class NodeWidget extends React.Component {
               return false;
             }
           }}
-          fullScreen={this.state.creatingNewSegment}
-          disableEscapeKeyDown={this.state.creatingNewSegment}
         >
-          {!this.state.creatingNewSegment && (
-            <>
-              <DialogTitle id='form-dialog-title'>Segment node</DialogTitle>
+          <DialogTitle id='form-dialog-title'>Segment node</DialogTitle>
 
-              <DialogContent>
-                <DialogContentText>
-                  Segments evaluate user's presence in a group of users defined
-                  by system-provided conditions. Execution flow can be directed
-                  based on presence/absence of user within the selected segment.
-                  You can either pick one of the existing segments or create a
-                  new one.
-                </DialogContentText>
+          <DialogContent>
+            <DialogContentText>
+              Segments evaluate user's presence in a group of users defined
+              by system-provided conditions. Execution flow can be directed
+              based on presence/absence of user within the selected segment.
+              You can either pick one of the existing segments or create a
+              new one.
+            </DialogContentText>
 
-                <Grid container spacing={3}>
-                  <Grid item xs={6}>
-                    <TextField
-                      margin='normal'
-                      id='segment-name'
-                      label='Node name'
-                      fullWidth
-                      value={this.state.nodeFormName}
-                      onChange={event => {
-                        this.setState({
-                          nodeFormName: event.target.value
-                        });
-                      }}
-                    />
-                  </Grid>
-                </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={6}>
+                <TextField
+                  margin='normal'
+                  id='segment-name'
+                  label='Node name'
+                  fullWidth
+                  value={this.state.nodeFormName}
+                  onChange={event => {
+                    this.setState({
+                      nodeFormName: event.target.value
+                    });
+                  }}
+                />
+              </Grid>
+            </Grid>
 
-                <Grid container spacing={3} alignItems='flex-end'>
-                  <Grid item xs={8}>
-                    <SegmentSelector
-                        selectedSegment={this.state.selectedSegment}
-                        selectedSegmentSourceTable={this.state.selectedSegmentSourceTable}
-                        onSegmentTypeButtonClick={this.actionSetTable}
-                        onSegmentSelectedChange={this.segmentSelectedChange}
-                    >
-                    </SegmentSelector>
-                  </Grid>
-                  {window.RempSegmenter && (
-                    <Grid item xs={4} style={{textAlign: 'right', paddingBottom: '4px'}}>
-                      <Button
-                        variant='contained'
-                        color='primary'
-                        size='small'
-                        style={{ position: 'relative', bottom: '10px' }}
-                        onClick={this.handleNewSegmentClick}
-                      >
-                        <Icon style={{ marginRight: '5px' }}>add_circle</Icon>
-                        New segment
-                      </Button>
-                    </Grid>
-                  )}
-                </Grid>
-              </DialogContent>
-            </>
-          )}
+            <Grid container spacing={3} alignItems='flex-end'>
+              <Grid item xs={8}>
+                <SegmentSelector
+                    selectedSegment={this.state.selectedSegment}
+                    selectedSegmentSourceTable={this.state.selectedSegmentSourceTable}
+                    onSegmentTypeButtonClick={this.actionSetTable}
+                    onSegmentSelectedChange={this.segmentSelectedChange}
+                >
+                </SegmentSelector>
+              </Grid>
+              <Grid item xs={4} style={{textAlign: 'right', paddingBottom: '4px'}}>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  size='small'
+                  style={{ position: 'relative', bottom: '10px' }}
+                  onClick={this.handleNewSegmentClick}
+                >
+                  <Icon style={{ marginRight: '5px' }}>add_circle</Icon>
+                  New segment
+                </Button>
+              </Grid>
+            </Grid>
+          </DialogContent>
 
-          {this.state.creatingNewSegment && (
-            <DialogContent>
-              <div
-                id='segmenter'
-                style={{ position: 'fixed', zIndex: '99999999' }}
-              />
-            </DialogContent>
-          )}
+          <DialogActions>
+            <Button
+              color='secondary'
+              onClick={() => {
+                this.closeDialog();
+              }}
+            >
+              Cancel
+            </Button>
 
-          {!this.state.creatingNewSegment && (
-            <DialogActions>
-              <Button
-                color='secondary'
-                onClick={() => {
-                  this.closeDialog();
-                }}
-              >
-                Cancel
-              </Button>
+            <Button
+              color='primary'
+              onClick={() => {
+                // https://github.com/projectstorm/react-diagrams/issues/50 huh
 
-              <Button
-                color='primary'
-                onClick={() => {
-                  // https://github.com/projectstorm/react-diagrams/issues/50 huh
+                this.props.node.name = this.state.nodeFormName;
+                this.props.node.selectedSegment = this.state.selectedSegment;
 
-                  this.props.node.name = this.state.nodeFormName;
-                  this.props.node.selectedSegment = this.state.selectedSegment;
-
-                  this.props.diagramEngine.repaintCanvas();
-                  this.closeDialog();
-                }}
-              >
-                Save changes
-              </Button>
-            </DialogActions>
-          )}
+                this.props.diagramEngine.repaintCanvas();
+                this.closeDialog();
+              }}
+            >
+              Save changes
+            </Button>
+          </DialogActions>
         </Dialog>
       </div>
     );

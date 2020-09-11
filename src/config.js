@@ -1,31 +1,24 @@
 // window.Scenario = {
 //   config: {
 //     AUTH_TOKEN: '',
-//     API_HOST: 'https://predplatne.dennikn.sk/api/v1',
+//     CRM_HOST: 'https://predplatne.dennikn.sk',
 //     SCENARIO_ID: null
 //     BANNER_ENABLED: null
 //   }
 // };
 
-// window.Segments = {
-//   config: {
-//     AUTH_TOKEN: '',
-//     API_HOST: 'https://predplatne.dennikn.sk',
-//     CANCEL_PATH: '#',
-//     SEGMENT_ID: null
-//   }
-// };
+export const { AUTH_TOKEN, CRM_HOST, SCENARIO_ID, BANNER_ENABLED } = window.Scenario.config;
 
-export const { AUTH_TOKEN, API_HOST, SCENARIO_ID, BANNER_ENABLED } = window.Scenario.config;
+export const URL_SCENARIO_DETAIL = `${CRM_HOST}/api/v1/scenarios/info?id=`;
+export const URL_SCENARIO_CREATE = `${CRM_HOST}/api/v1/scenarios/create`;
+export const URL_SCENARIO_CRITERIA = `${CRM_HOST}/api/v1/scenarios/criteria`;
+export const URL_SEGMENTS_INDEX = `${CRM_HOST}/api/v1/segments/list`;
+export const URL_TRIGGERS_INDEX = `${CRM_HOST}/api/v1/events/list`;
+export const URL_BEFORE_TRIGGERS_INDEX = `${CRM_HOST}/api/v1/event-generators/list`;
+export const URL_MAILS_INDEX = `${CRM_HOST}/api/v1/mail-template/list`;
+export const URL_GOALS_INDEX = `${CRM_HOST}/api/v1/onboarding-goals/list`;
+export const URL_BANNERS_INDEX = `${CRM_HOST}/api/v1/remp/list-banners`;
+export const URL_ELEMENT_TOOLTIP = `${CRM_HOST}/api/v1/scenarios/element`;
+export const URL_TRIGGER_TOOLTIP = `${CRM_HOST}/api/v1/scenarios/trigger`;
 
-export const URL_SCENARIO_DETAIL = `${API_HOST}/scenarios/info?id=`;
-export const URL_SCENARIO_CREATE = `${API_HOST}/scenarios/create`;
-export const URL_SCENARIO_CRITERIA = `${API_HOST}/scenarios/criteria`;
-export const URL_SEGMENTS_INDEX = `${API_HOST}/segments/list`;
-export const URL_TRIGGERS_INDEX = `${API_HOST}/events/list`;
-export const URL_BEFORE_TRIGGERS_INDEX = `${API_HOST}/event-generators/list`;
-export const URL_MAILS_INDEX = `${API_HOST}/mail-template/list`;
-export const URL_GOALS_INDEX = `${API_HOST}/onboarding-goals/list`;
-export const URL_BANNERS_INDEX = `${API_HOST}/remp/list-banners`;
-export const URL_ELEMENT_TOOLTIP = `${API_HOST}/scenarios/element`;
-export const URL_TRIGGER_TOOLTIP = `${API_HOST}/scenarios/trigger`;
+export const URL_SEGMENT_NEW = `${CRM_HOST}/segment/stored-segments/new`;
