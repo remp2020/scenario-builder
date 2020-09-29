@@ -1,13 +1,13 @@
 function unitTimeToMinutes(time, unit) {
   switch (unit) {
     case 'minutes':
-      return time;
+      return parseInt(time);
     case 'hours':
       return time * 60;
     case 'days':
       return time * 60 * 24;
     default:
-      return time;
+      return parseInt(time);
   }
 }
 
@@ -19,13 +19,15 @@ export class ExportService {
   exportPayload() {
     const payload = {};
     const serializedModel = this.model.serializeDiagram();
+    const triggers = ['trigger', 'before_trigger'];
 
     payload.triggers = {};
     payload.elements = {};
+
     payload.visual = {};
 
     serializedModel.nodes
-      .filter(node => node.type === 'trigger')
+      .filter(node => triggers.includes(node.type))
       .map(node => (payload.triggers[node.id] = this.formatNode(node)));
 
     Object.entries(this.model.getNodes()).forEach(node => {
@@ -36,7 +38,7 @@ export class ExportService {
     });
 
     Object.entries(this.model.getNodes()).forEach(node => {
-      if (node[1].type !== 'trigger') {
+      if (!triggers.includes(node[1].type)) {
         payload.elements[node[0]] = this.formatNode(node[1].serialize());
       }
     });
@@ -127,6 +129,21 @@ export class ExportService {
         elements: this.getAllChildrenNodes(node).map(
           descendantNode => descendantNode.id
         )
+      };
+    } else if (node.type === 'before_trigger') {
+      return {
+        id: node.id,
+        name: node.name ? node.name : '',
+        type: 'before_event',
+        event: {
+          code: node.selectedTrigger ? node.selectedTrigger : 'subscription_ends'
+        },
+        elements: this.getAllChildrenNodes(node).map(
+          descendantNode => descendantNode.id
+        ),
+        options: {
+          minutes: unitTimeToMinutes(node.time, node.timeUnit)
+        }
       };
     } else if (node.type === 'wait') {
       return {

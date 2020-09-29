@@ -10,6 +10,7 @@ import {
   fetchGoals,
   fetchBanners,
   fetchTriggers,
+  fetchBeforeTriggers,
   fetchCriteria,
   fetchScenario,
   setScenarioName,
@@ -24,6 +25,7 @@ class App extends Component {
     dispatch(fetchCriteria());
     dispatch(fetchGoals());
     dispatch(fetchTriggers());
+    dispatch(fetchBeforeTriggers());
     dispatch(fetchMails());
 
     if (config.BANNER_ENABLED) {

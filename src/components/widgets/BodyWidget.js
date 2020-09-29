@@ -21,12 +21,13 @@ import WaitIcon from '@material-ui/icons/AccessAlarmsOutlined';
 import SegmentIcon from '@material-ui/icons/SubdirectoryArrowRight';
 import ConditionIcon from '@material-ui/icons/CallSplit';
 import GoalIcon from '@material-ui/icons/CheckBox';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 
 import * as config from './../../config';
 import { TrayItemWidget } from './TrayItemWidget';
-import { ExportService } from './../../services/ExportService';
+import { ExportService } from '../../services/ExportService';
 import Notification from '../Notification';
-import { Email, Segment, Trigger, Wait, Goal, Banner, Condition } from './../elements';
+import { Email, Segment, Trigger, BeforeTrigger, Wait, Goal, Banner, Condition } from './../elements';
 import {
   setScenarioId,
   setScenarioName,
@@ -264,6 +265,12 @@ class BodyWidget extends React.Component {
                 name='Event'
                 icon={<TriggerIcon />}
               />
+
+              <TrayItemWidget
+                  model={{ type: 'before_trigger' }}
+                  name='Before Event'
+                  icon={<NotificationsActiveIcon />}
+              />
             </List>
 
             <List
@@ -348,6 +355,8 @@ class BodyWidget extends React.Component {
                   node = new Condition.NodeModel({});
                 } else if (data.type === 'trigger') {
                   node = new Trigger.NodeModel({});
+                } else if (data.type === 'before_trigger') {
+                  node = new BeforeTrigger.NodeModel({});
                 } else if (data.type === 'wait') {
                   node = new Wait.NodeModel({});
                 } else if (data.type === 'goal') {
