@@ -45,6 +45,17 @@ function optionLabel(option) {
   }
 }
 
+function optionGroup(option) {
+  if (typeof(option) === 'string') {
+    // free-solo value
+    return '';
+  } else if (option.hasOwnProperty('group')) {
+    return option.group;
+  } else {
+    return '';
+  }
+}
+
 export default function StringLabeledArrayParam(props) {
   const classes = elementStyles({operator: props.params.operator});
   const handleChange = (event, values) => {
@@ -75,6 +86,7 @@ export default function StringLabeledArrayParam(props) {
         onChange={handleChange}
         value={selectedOptions(props.node.values.selection, props.params.options)}
         freeSolo={props.params.freeSolo}
+        groupBy={optionGroup}
         renderInput={params => (
           <TextField
             {...params}
@@ -91,7 +103,7 @@ export default function StringLabeledArrayParam(props) {
 StringLabeledArrayParam.propTypes = {
   // node = {values: {selection: ['city_1'], operator: 'or'}, key: 'type', id: '1'}
   node: PropTypes.object.isRequired,
-  // params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1'}], operator: 'or', freeSolo: true}
+  // params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1', group: 'Group 1'}], operator: 'or', freeSolo: true}
   params: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
