@@ -1,7 +1,7 @@
 import flatMap from 'lodash/flatMap';
 
 // import the custom models
-import { Banner, Email, Segment, Trigger, Wait, Goal, Condition } from './../components/elements';
+import {Banner, Email, Segment, Trigger, Wait, Goal, Condition, BeforeTrigger} from './../components/elements';
 import { BANNER_ENABLED } from './../config';
 
 function minutesToTimeUnit(minutes) {
@@ -46,6 +46,24 @@ export class RenderService {
     if (element.type === 'event') {
       element.selectedTrigger = element.event.code;
       node = new Trigger.NodeModel(element);
+
+      nodes = element.elements.flatMap(elementId => {
+        const element = this.payload.elements[elementId];
+        const visual = this.payload.visual[element.id];
+
+        const nextNodes = this.renderElements(element, visual);
+        const link = node.getPort('right').link(nextNodes[0].getPort('left')); //FIXME/REFACTOR: nextNodes[0] is the last added node, it works, but it's messy
+
+        this.activeModel.addLink(link);
+
+        return nextNodes;
+      });
+    } else if (element.type === 'before_event') {
+      const timeUnit = minutesToTimeUnit(element.options.minutes);
+      element.timeUnit = timeUnit.unit;
+      element.time = timeUnit.time;
+      element.selectedTrigger = element.event.code;
+      node = new BeforeTrigger.NodeModel(element);
 
       nodes = element.elements.flatMap(elementId => {
         const element = this.payload.elements[elementId];

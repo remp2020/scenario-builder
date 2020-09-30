@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import SegmentsReducer from './SegmentsReducer';
 import CriteriaReducer from './CriteriaReducer';
 import TriggersReducer from './TriggersReducer';
+import BeforeTriggersReducer from './BeforeTriggersReducer';
 import CanvasReducer from './CanvasReducer';
 import ScenarioReducer from './ScenarioReducer';
 import MailsReducer from './MailsReducer';
@@ -11,6 +12,7 @@ import BannersReducer from './BannersReducer';
 export default combineReducers({
   segments: SegmentsReducer,
   triggers: TriggersReducer,
+  beforeTriggers: BeforeTriggersReducer,
   canvas: CanvasReducer,
   criteria: CriteriaReducer,
   scenario: ScenarioReducer,
