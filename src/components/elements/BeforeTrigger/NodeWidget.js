@@ -139,11 +139,11 @@ class NodeWidget extends React.Component {
             }
           }}
         >
-          <DialogTitle id='form-dialog-title'>Before trigger node</DialogTitle>
+          <DialogTitle id='form-dialog-title'>Before event node</DialogTitle>
 
           <DialogContent>
             <DialogContentText>
-              Events are emitted in advanced according to the selected time period.
+              Events are emitted in advanced of trigger according to selected time period.
             </DialogContentText>
 
             <Grid container>

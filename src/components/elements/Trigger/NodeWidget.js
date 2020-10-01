@@ -132,7 +132,7 @@ class NodeWidget extends React.Component {
             }
           }}
         >
-          <DialogTitle id='form-dialog-title'>Trigger node</DialogTitle>
+          <DialogTitle id='form-dialog-title'>Event node</DialogTitle>
 
           <DialogContent>
             <DialogContentText>
