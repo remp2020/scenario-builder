@@ -1,12 +1,11 @@
 {
   "name": "remp-scenario-builder",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.8.1",
     "@material-ui/icons": "^4.5.1",
     "@material-ui/lab": "^4.0.0-alpha.37",
-    "@remp/remp-segment-builder": "^0.1.4",
     "axios": "^0.18.0",
     "eslint-plugin-react-hooks": "^2.3.0",
     "lodash": "^4.17.11",
@@ -26,10 +25,7 @@
     "start": "react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "copy:segmenter": "cpx node_modules/vue/dist/vue.min.js public/segmenter & cpx node_modules/@remp/remp-segment-builder/dist/RempSegmenter.css public/segmenter & cpx node_modules/@remp/remp-segment-builder/dist/RempSegmenter.umd.min.js public/segmenter",
-    "prestart": "npm run copy:segmenter",
-    "prebuild": "npm run copy:segmenter"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
