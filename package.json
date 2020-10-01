@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "copy:segmenter": "cpx node_modules/vue/dist/vue.min.js public/segmenter & cpx node_modules/@remp/remp-segment-builder/dist/RempSegmenter.css public/segmenter & cpx node_modules/@remp/remp-segment-builder/dist/RempSegmenter.umd.min.js public/segmenter",
