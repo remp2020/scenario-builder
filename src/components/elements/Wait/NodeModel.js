@@ -7,8 +7,8 @@ export class NodeModel extends BaseNodeModel {
     super('wait', element.id);
 
     this.name = element.name;
-    this.waitingTime = element.waitingTime || 10;
-    this.waitingUnit = element.waitingUnit || 'minutes';
+    this.waitingTime = element.waitingTime !== undefined ? element.waitingTime : 10;
+    this.waitingUnit = element.waitingUnit !== undefined ? element.waitingUnit : 'minutes';
 
     this.addPort(new PortModel('left'));
     this.addPort(new PortModel('right'));

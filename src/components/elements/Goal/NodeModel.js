@@ -23,11 +23,12 @@ export class NodeModel extends BaseNodeModel {
     super.deSerialize(ob, engine);
     this.name = ob.name;
     this.selectedGoals = ob.selectedGoals;
-    this.timeoutTime = ob.timeoutTime || '';
-    this.timeoutUnit = ob.timeoutUnit || 'days';
 
-    this.recheckPeriodTime = ob.recheckPeriodTime || '1';
-    this.recheckPeriodUnit = ob.recheckPeriodUnit || 'hours';
+    this.timeoutTime = ob.timeoutTime !== null && ob.timeoutTime !== undefined ? ob.timeoutTime : '';
+    this.timeoutUnit = ob.timeoutUnit !== null && ob.timeoutUnit !== undefined ? ob.timeoutUnit : 'days';
+
+    this.recheckPeriodTime = ob.recheckPeriodTime !== null && ob.recheckPeriodTime !== undefined ? ob.recheckPeriodTime : '1';
+    this.recheckPeriodUnit = ob.recheckPeriodUnit !== null && ob.recheckPeriodUnit !== undefined ? ob.recheckPeriodUnit : 'hours';
   }
 
   serialize() {

@@ -8,8 +8,8 @@ export class NodeModel extends BaseNodeModel {
 
     this.name = element.name;
     this.selectedTrigger = element.selectedTrigger;
-    this.time = element.time || 10;
-    this.timeUnit = element.timeUnit || 'hours';
+    this.time = element.time !== undefined ? element.time : 10;
+    this.timeUnit = element.timeUnit !== undefined ? element.timeUnit : 'hours';
 
     this.addPort(new PortModel('right'));
   }

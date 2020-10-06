@@ -5,6 +5,13 @@ import {Banner, Email, Segment, Trigger, Wait, Goal, Condition, BeforeTrigger} f
 import { BANNER_ENABLED } from './../config';
 
 function minutesToTimeUnit(minutes) {
+  if (minutes === 0) {
+    return {
+      unit: 'minutes',
+      time: minutes
+    };
+  }
+
   if (minutes % 1440 === 0) {
     return {
       unit: 'days',
