@@ -1,4 +1,4 @@
-import { DiagramEngine, DiagramModel } from 'storm-react-diagrams';
+import { DiagramEngine, DiagramModel } from '@projectstorm/react-diagrams';
 
 // import the custom models
 import {

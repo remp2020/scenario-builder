@@ -1,4 +1,4 @@
-import { NodeModel as BaseNodeModel } from 'storm-react-diagrams';
+import { NodeModel as BaseNodeModel } from '@projectstorm/react-diagrams';
 import * as _ from 'lodash';
 import { PortModel } from './PortModel';
 

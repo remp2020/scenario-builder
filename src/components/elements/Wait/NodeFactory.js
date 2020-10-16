@@ -1,4 +1,4 @@
-import { AbstractNodeFactory } from 'storm-react-diagrams';
+import { AbstractNodeFactory } from '@projectstorm/react-diagrams';
 
 import NodeWidget from './NodeWidget';
 import { NodeModel } from './NodeModel';

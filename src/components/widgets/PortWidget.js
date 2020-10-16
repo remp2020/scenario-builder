@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { PortWidget as BasePortWidget } from 'storm-react-diagrams';
+import { PortWidget as BasePortWidget } from '@projectstorm/react-diagrams';
 
 export class PortWidget extends BasePortWidget {
   constructor(props) {

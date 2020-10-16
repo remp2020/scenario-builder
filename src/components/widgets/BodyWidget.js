@@ -2,7 +2,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import { DiagramWidget } from 'storm-react-diagrams';
+import { DiagramWidget } from '@projectstorm/react-diagrams';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';

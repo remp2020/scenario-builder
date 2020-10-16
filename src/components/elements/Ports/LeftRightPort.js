@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { PortModel as BasePortModel } from 'storm-react-diagrams';
+import { PortModel as BasePortModel } from '@projectstorm/react-diagrams';
 
 import { LinkModel } from './../Link';
 

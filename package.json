@@ -19,6 +19,7 @@
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "@projectstorm/react-diagrams": "^5.3.2",
     "storm-react-diagrams": "^5.2.1"
   },
   "scripts": {

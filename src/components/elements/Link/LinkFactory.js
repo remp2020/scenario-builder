@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DefaultLinkFactory } from 'storm-react-diagrams';
+import { DefaultLinkFactory } from '@projectstorm/react-diagrams';
 
 import { LinkModel } from './LinkModel';
 

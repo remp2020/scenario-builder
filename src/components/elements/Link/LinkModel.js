@@ -1,4 +1,4 @@
-import { DefaultLinkModel } from 'storm-react-diagrams';
+import { DefaultLinkModel } from '@projectstorm/react-diagrams';
 
 export class LinkModel extends DefaultLinkModel {
   constructor() {
