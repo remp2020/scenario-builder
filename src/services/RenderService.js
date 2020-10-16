@@ -38,193 +38,125 @@ export class RenderService {
   renderPayload(payload) {
     this.payload = payload;
 
+    const visual = this.payload.visual;
+
+    //render Nodes
+    flatMap(payload.elements, element => {
+      let node = null;
+
+      if (element.type === 'segment') {
+
+        element.selectedSegment = element.segment.code;
+        node = new Segment.NodeModel(element);
+
+      } else if (element.type === 'condition') {
+
+        node = new Condition.NodeModel({
+          id: element.id,
+          name: element.name,
+          conditions: element.condition.conditions
+        });
+
+      } else if (element.type === 'email') {
+
+        element.selectedMail = element.email.code;
+        node = new Email.NodeModel(element);
+
+      } else if (element.type === 'wait') {
+
+        const timeUnit = minutesToTimeUnit(element.wait.minutes);
+        element.waitingUnit = timeUnit.unit;
+        element.waitingTime = timeUnit.time;
+
+        node = new Wait.NodeModel(element);
+
+      } else if (element.type === 'banner') {
+
+        if (!BANNER_ENABLED) {
+          throw Error("BANNER_ENABLED configuration is false, but loaded scenario contains banner element.");
+        }
+
+        const timeUnit = minutesToTimeUnit(element.banner.expiresInMinutes);
+        element.expiresInUnit = timeUnit.unit;
+        element.expiresInTime = timeUnit.time;
+
+        element.selectedBanner = element.banner.id;
+
+        node = new Banner.NodeModel(element);
+
+      } else if (element.type === 'goal') {
+
+        if (element.goal.hasOwnProperty("timeoutMinutes")) {
+          const timeUnit = minutesToTimeUnit(element.goal.timeoutMinutes);
+          element.timeoutUnit = timeUnit.unit;
+          element.timeoutTime = timeUnit.time;
+        }
+
+        const recheckPeriodTimeUnit = minutesToTimeUnit(element.goal.recheckPeriodMinutes);
+        element.recheckPeriodUnit = recheckPeriodTimeUnit.unit;
+        element.recheckPeriodTime = recheckPeriodTimeUnit.time;
+
+        element.selectedGoals = element.goal.codes;
+
+        node = new Goal.NodeModel(element);
+      }
+
+      this.activeModel.addNode(node);
+      node.setPosition(visual[element.id].x, visual[element.id].y);
+    });
+
+    // link nodes
+    flatMap(payload.elements, element => {
+      let sourceNode = this.activeModel.getNode(element.id);
+
+      element[element.type].descendants.forEach(item => {
+        this.linkNodes(sourceNode, this.activeModel.getNode(item.uuid), item.direction);
+      });
+    });
+
+    // renderTriggers
     flatMap(payload.triggers, trigger => {
-      const triggerVisual = payload.visual[trigger.id];
-      // trigger.type = "trigger";
 
-      return this.renderElements(trigger, triggerVisual);
+      let node = null;
+      if (trigger.type === 'event') {
+
+        trigger.selectedTrigger = trigger.event.code;
+        node = new Trigger.NodeModel(trigger);
+
+      } else if (trigger.type === 'before_event') {
+
+        const timeUnit = minutesToTimeUnit(trigger.options.minutes);
+        trigger.timeUnit = timeUnit.unit;
+        trigger.time = timeUnit.time;
+        trigger.selectedTrigger = trigger.event.code;
+
+        node = new BeforeTrigger.NodeModel(trigger);
+      }
+
+      this.activeModel.addNode(node);
+      node.setPosition(visual[trigger.id].x, visual[trigger.id].y);
+
+      // link triggers with nodes
+      trigger.elements.forEach(element => {
+        this.linkNodes(node, this.activeModel.getNode(element));
+      });
     });
   }
 
-  renderElements(element, visual) {
-    let nodes = [];
-    let node = null;
-
-    if (element.type === 'event') {
-      element.selectedTrigger = element.event.code;
-      node = new Trigger.NodeModel(element);
-
-      nodes = element.elements.flatMap(elementId => {
-        const element = this.payload.elements[elementId];
-        const visual = this.payload.visual[element.id];
-
-        const nextNodes = this.renderElements(element, visual);
-        const link = node.getPort('right').link(nextNodes[0].getPort('left')); //FIXME/REFACTOR: nextNodes[0] is the last added node, it works, but it's messy
-
+  linkNodes(sourceNode, targetNode, direction) {
+    if (direction){
+      if (direction === 'positive') {
+        const link = sourceNode.getPort('right').link(targetNode.getPort('left'));
         this.activeModel.addLink(link);
-
-        return nextNodes;
-      });
-    } else if (element.type === 'before_event') {
-      const timeUnit = minutesToTimeUnit(element.options.minutes);
-      element.timeUnit = timeUnit.unit;
-      element.time = timeUnit.time;
-      element.selectedTrigger = element.event.code;
-      node = new BeforeTrigger.NodeModel(element);
-
-      nodes = element.elements.flatMap(elementId => {
-        const element = this.payload.elements[elementId];
-        const visual = this.payload.visual[element.id];
-
-        const nextNodes = this.renderElements(element, visual);
-        const link = node.getPort('right').link(nextNodes[0].getPort('left')); //FIXME/REFACTOR: nextNodes[0] is the last added node, it works, but it's messy
-
+        return;
+      } else if (direction === 'negative') {
+        const link = sourceNode.getPort('bottom').link(targetNode.getPort('left'));
         this.activeModel.addLink(link);
-
-        return nextNodes;
-      });
-    } else if (element.type === 'email') {
-      element.selectedMail = element.email.code;
-      node = new Email.NodeModel(element);
-
-      nodes = element.email.descendants.flatMap(descendantObj => {
-        const element = this.payload.elements[descendantObj.uuid];
-        const visual = this.payload.visual[element.id];
-
-        const nextNodes = this.renderElements(element, visual);
-        const link = node.getPort('right').link(nextNodes[0].getPort('left'));
-
-        this.activeModel.addLink(link);
-
-        return nextNodes;
-      });
-    } else if (element.type === 'banner') {
-
-      if (!BANNER_ENABLED) {
-        throw Error("BANNER_ENABLED configuration is false, but loaded scenario contains banner element.");
+        return;
       }
+    }
 
-      const timeUnit = minutesToTimeUnit(element.banner.expiresInMinutes);
-      element.expiresInUnit = timeUnit.unit;
-      element.expiresInTime = timeUnit.time;
-
-      element.selectedBanner = element.banner.id;
-      node = new Banner.NodeModel(element);
-
-      nodes = element.banner.descendants.flatMap(descendantObj => {
-        const element = this.payload.elements[descendantObj.uuid];
-        const visual = this.payload.visual[element.id];
-
-        const nextNodes = this.renderElements(element, visual);
-        const link = node.getPort('right').link(nextNodes[0].getPort('left'));
-
-        this.activeModel.addLink(link);
-
-        return nextNodes;
-      });
-    } else if (element.type === 'segment') {
-      element.selectedSegment = element.segment.code;
-      node = new Segment.NodeModel(element);
-
-      nodes = element.segment.descendants.flatMap(descendantObj => {
-        const element = this.payload.elements[descendantObj.uuid];
-        const visual = this.payload.visual[element.id];
-        const nextNodes = this.renderElements(element, visual);
-
-        if (descendantObj.direction) {
-          if (descendantObj.direction === 'positive') {
-            const link = node.getPort('right').link(nextNodes[0].getPort('left'));
-            this.activeModel.addLink(link);
-          } else if (descendantObj.direction === 'negative') {
-            const link = node.getPort('bottom').link(nextNodes[0].getPort('left'));
-            this.activeModel.addLink(link);
-          }
-        }
-
-        return nextNodes;
-      });
-    } else if (element.type === 'wait') {
-      const timeUnit = minutesToTimeUnit(element.wait.minutes);
-      element.waitingUnit = timeUnit.unit;
-      element.waitingTime = timeUnit.time;
-
-      node = new Wait.NodeModel(element);
-
-      nodes = element.wait.descendants.flatMap(descendantObj => {
-        const element = this.payload.elements[descendantObj.uuid];
-        const visual = this.payload.visual[element.id];
-
-        const nextNodes = this.renderElements(element, visual);
-        const link = node.getPort('right').link(nextNodes[0].getPort('left'));
-        this.activeModel.addLink(link);
-
-        return nextNodes;
-      });
-    } else if (element.type === 'goal') {
-      if (element.goal.hasOwnProperty("timeoutMinutes")) {
-        const timeUnit = minutesToTimeUnit(element.goal.timeoutMinutes);
-        element.timeoutUnit = timeUnit.unit;
-        element.timeoutTime = timeUnit.time;
-      }
-
-      const recheckPeriodTimeUnit = minutesToTimeUnit(element.goal.recheckPeriodMinutes);
-      element.recheckPeriodUnit = recheckPeriodTimeUnit.unit;
-      element.recheckPeriodTime = recheckPeriodTimeUnit.time;
-
-      element.selectedGoals = element.goal.codes;
-      node = new Goal.NodeModel(element);
-
-      nodes = element.goal.descendants.flatMap(descendantObj => {
-        const element = this.payload.elements[descendantObj.uuid];
-        const visual = this.payload.visual[element.id];
-        const nextNodes = this.renderElements(element, visual);
-
-        if (descendantObj.direction) {
-          if (descendantObj.direction === 'positive') {
-            const link = node.getPort('right').link(nextNodes[0].getPort('left'));
-            this.activeModel.addLink(link);
-          } else if (descendantObj.direction === 'negative') {
-            const link = node.getPort('bottom').link(nextNodes[0].getPort('left'));
-            this.activeModel.addLink(link);
-          }
-        }
-
-        return nextNodes;
-      });
-    } else if (element.type === 'condition') {
-        [node, nodes] = this.renderCondition(element);
-     }
-
-    this.activeModel.addNode(node);
-    node.setPosition(visual.x, visual.y);
-
-    return [node, ...nodes];
-  }
-
-  renderCondition(element) {
-    let node = new Condition.NodeModel({
-      id: element.id,
-      name: element.name,
-      conditions: element.condition.conditions
-    });
-
-    let nodes = element.condition.descendants.flatMap(descendantObj => {
-      const element = this.payload.elements[descendantObj.uuid];
-      const visual = this.payload.visual[element.id];
-      const nextNodes = this.renderElements(element, visual);
-
-      if (descendantObj.direction) {
-        if (descendantObj.direction === 'positive') {
-          const link = node.getPort('right').link(nextNodes[0].getPort('left'));
-          this.activeModel.addLink(link);
-        } else if (descendantObj.direction === 'negative') {
-          const link = node.getPort('bottom').link(nextNodes[0].getPort('left'));
-          this.activeModel.addLink(link);
-        }
-      }
-
-      return nextNodes;
-    });
-    return [node, nodes];
+    const link = sourceNode.getPort('right').link(targetNode.getPort('left'));
+    this.activeModel.addLink(link);
   }
 }
