@@ -2,7 +2,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import { DiagramWidget } from '@projectstorm/react-diagrams';
+import { DiagramWidget, NodeModel } from '@projectstorm/react-diagrams';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
@@ -58,6 +58,11 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar
 });
 
+const ctrlKey = 17,
+    cmdKey = 91,
+    vKey = 86,
+    cKey = 67;
+
 class BodyWidget extends React.Component {
   constructor(props) {
     super(props);
@@ -65,6 +70,72 @@ class BodyWidget extends React.Component {
       editingName: false,
       editedName: ''
     };
+
+    this.ctrlDown = false;
+    this.nodesToCopy = [];
+
+    // Required to bind 'this' inside callback methods
+    this.keydownHandler = this.keydownHandler.bind(this);
+    this.keyupHandler = this.keyupHandler.bind(this);
+    this.copyNode = this.copyNode.bind(this);
+  }
+
+  copyNode(nodeId) {
+    let offset = { x: 75, y: 75 };
+    let model = this.props.app.getDiagramEngine().getDiagramModel();
+    let nodes = model.getNodes();
+
+    if (nodes[nodeId] !== undefined) {
+      let newNode = nodes[nodeId].clone({});
+      newNode.setPosition(newNode.x + offset.x, newNode.y + offset.y);
+      newNode.selected = false;
+      model.addNode(newNode);
+      this.forceUpdate();
+    } else {
+      console.warn("Unable to copy node with ID " + nodeId);
+    }
+  }
+
+  keydownHandler(e) {
+    if (e.keyCode === ctrlKey || e.keyCode === cmdKey) {
+      this.ctrlDown = true;
+    }
+
+    // CTRL/CMD + C
+    if (this.ctrlDown && (e.keyCode === cKey)) {
+      let model = this.props.app.getDiagramEngine().getDiagramModel();
+      this.nodesToCopy = [];
+      for (const node of model.getSelectedItems()) {
+        // currently do not allow to copy links
+        if (node.selected && node instanceof NodeModel) {
+          this.nodesToCopy.push(node.id);
+        }
+      }
+    }
+
+    // CTRL/CMD + V
+    if (this.ctrlDown && (e.keyCode === vKey)) {
+      for (const nodeId of this.nodesToCopy) {
+        this.copyNode(nodeId);
+      }
+      this.nodesToCopy = [];
+    }
+  }
+
+  keyupHandler(e) {
+    if (e.keyCode === ctrlKey || e.keyCode === cmdKey) {
+      this.ctrlDown = false;
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.keydownHandler);
+    document.addEventListener('keyup', this.keyupHandler);
+  }
+  
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.keydownHandler);
+    document.removeEventListener('keyup', this.keyupHandler);
   }
 
   componentDidUpdate(prevProps) {
