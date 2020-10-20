@@ -134,6 +134,8 @@ class NodeWidget extends React.Component {
         />
 
         <Dialog
+          fullWidth={true}
+          maxWidth='md'
           open={this.state.dialogOpened}
           onClose={this.closeDialog}
           aria-labelledby='form-dialog-title'

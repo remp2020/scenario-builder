@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { actionSetNodeValues } from '../criteriaReducer';
@@ -18,7 +19,11 @@ const elementStyles = makeStyles(theme => ({
       marginLeft: '20px'
     },
     position: 'relative'
-  })
+  }),
+  subtitle: {
+    paddingLeft: '6px',
+    color: theme.palette.grey[600]
+  }
 }));
 
 function selectedOptions(selectedValues, options) {
@@ -45,6 +50,14 @@ function optionLabel(option) {
   }
 }
 
+function optionSubtitle(option) {
+  if (typeof(option) === 'string') {
+    return '';
+  } else {
+    return option.subtitle !== undefined ? option.subtitle : '';
+  }
+}
+
 function optionGroup(option) {
   if (typeof(option) === 'string') {
     // free-solo value
@@ -55,6 +68,18 @@ function optionGroup(option) {
     return '';
   }
 }
+
+// https://material-ui.com/components/autocomplete/#createfilteroptions-config-filteroptions
+// Defines what values are searched within option
+const filterOptions = createFilterOptions({
+  matchFrom: 'any',
+  trim: true,
+  ignoreAccents: true,
+  ignoreCase: true,
+  stringify: option => {
+    return optionLabel(option) + " " + optionSubtitle(option);
+  },
+});
 
 export default function StringLabeledArrayParam(props) {
   const classes = elementStyles({operator: props.params.operator});
@@ -76,6 +101,7 @@ export default function StringLabeledArrayParam(props) {
   return (
     <Autocomplete
         multiple
+        disableCloseOnSelect
         ChipProps={{
           classes: {
             root: classes.chipRoot
@@ -87,6 +113,7 @@ export default function StringLabeledArrayParam(props) {
         value={selectedOptions(props.node.values.selection, props.params.options)}
         freeSolo={props.params.freeSolo}
         groupBy={optionGroup}
+        filterOptions={filterOptions}
         renderInput={params => (
           <TextField
             {...params}
@@ -96,6 +123,12 @@ export default function StringLabeledArrayParam(props) {
             fullWidth
           />
         )}
+        renderOption={(option, { selected }) => (
+          <React.Fragment>
+            {optionLabel(option)} 
+            <small className={classes.subtitle}>{optionSubtitle(option)}</small>
+          </React.Fragment>
+        )}
       />
   );
 }
@@ -103,7 +136,7 @@ export default function StringLabeledArrayParam(props) {
 StringLabeledArrayParam.propTypes = {
   // node = {values: {selection: ['city_1'], operator: 'or'}, key: 'type', id: '1'}
   node: PropTypes.object.isRequired,
-  // params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1', group: 'Group 1'}], operator: 'or', freeSolo: true}
+  // params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1', subtitle: '(best city)' group: 'Group 1'}], operator: 'or', freeSolo: true}
   params: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
