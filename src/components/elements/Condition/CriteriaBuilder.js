@@ -9,6 +9,7 @@ import { Card, CardContent, FormControl, InputLabel, Select, MenuItem, IconButto
 import { makeStyles } from '@material-ui/core/styles';
 import StringLabeledArrayParam from './CriteriaTypes/StringLabeledArrayParam';
 import BooleanParam from './CriteriaTypes/BooleanParam';
+import NumberParam from './CriteriaTypes/NumberParam';
 import { emptyNode, reducer, actionSetEvent, actionSetKeyForNode, actionAddCriterion, actionDeleteNode } from './criteriaReducer';
 
 const BuilderDispatch = React.createContext(null);
@@ -26,6 +27,8 @@ function CriteriaParams(props) {
       return (<StringLabeledArrayParam node={props.node} params={typeParams} dispatch={dispatch}></StringLabeledArrayParam>);
     case 'boolean':
       return (<BooleanParam node={props.node} params={typeParams} dispatch={dispatch}></BooleanParam>);
+    case 'number':
+      return (<NumberParam node={props.node} params={typeParams} dispatch={dispatch}></NumberParam>);
     default:
       throw new Error("unsupported node type " + typeParams.type);
   }
