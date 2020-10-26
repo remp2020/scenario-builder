@@ -190,7 +190,7 @@ class NodeWidget extends React.Component {
               Execution flow can be directed two ways from the node - a positive direction, when all goals are completed, or a negative one, when timeout threshold is reached.
             </DialogContentText>
 
-            <Grid container spacing={32}>
+            <Grid container>
               <Grid item xs={6}>
                 <TextField
                   margin='normal'
@@ -207,7 +207,7 @@ class NodeWidget extends React.Component {
               </Grid>
             </Grid>
 
-            <Grid container spacing={32}>
+            <Grid container>
               <Grid item xs={12}>
                 <MaterialSelect
                   options={this.transformOptionsForSelect()}
@@ -224,7 +224,7 @@ class NodeWidget extends React.Component {
               </Grid>
             </Grid>
 
-            <Grid container spacing={32}>
+            <Grid container>
               <Grid item xs={6}>
                 <TextField
                   id='recheck-period-time'
@@ -263,7 +263,7 @@ class NodeWidget extends React.Component {
               </Grid>
             </Grid>
             
-            <Grid container spacing={32}>
+            <Grid container>
               <Grid item xs={6}>
                 <TextField
                   id='timeout-time'
