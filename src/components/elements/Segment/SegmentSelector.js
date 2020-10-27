@@ -35,7 +35,7 @@ export default function SegmentSelector(props) {
     const sourceTable = getSourceTable(props.selectedSegmentSourceTable, props.selectedSegment, items);
 
     return (
-        <Grid container item xs={12} spacing={3}>
+        <Grid container item xs={12} spacing={2}>
             <Grid item xs={12}>
                 <ButtonGroup aria-label="outlined button group">
                     {items.map(item => (

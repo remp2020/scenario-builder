@@ -9,9 +9,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { PortWidget } from './../../widgets/PortWidget';
-import MaterialSelect from '../../MaterialSelect';
 import StatisticsTooltip from '../../StatisticTooltip';
 import { setCanvasZoomingAndPanning } from '../../../actions';
 
@@ -160,19 +159,24 @@ class NodeWidget extends React.Component {
 
             <Grid container>
               <Grid item xs={12}>
-                <MaterialSelect
-                  options={this.getTriggersInSelectableFormat()}
-                  value={this.getTriggersInSelectableFormat().find(
-                    option => option.value === this.state.selectedTrigger
-                  )}
-                  onChange={event => {
-                    this.setState({
-                      selectedTrigger: event.value
-                    });
-                  }}
-                  placeholder='Pick one'
-                  label='Selected Trigger'
-                />
+                <Autocomplete
+                    value={this.getTriggersInSelectableFormat().find(
+                      option => option.value === this.state.selectedTrigger
+                    )}
+                    options={this.getTriggersInSelectableFormat()}
+                    getOptionLabel={(option) => option.label}
+                    style={{ marginTop: 16 }}
+                    onChange={(event, selectedOption) => {
+                      if (selectedOption !== null) {
+                        this.setState({
+                          selectedTrigger: selectedOption.value
+                        });
+                      }
+                    }}
+                    renderInput={params => (
+                        <TextField {...params} variant="standard" label="Trigger" fullWidth />
+                    )}
+                  />
               </Grid>
             </Grid>
           </DialogContent>

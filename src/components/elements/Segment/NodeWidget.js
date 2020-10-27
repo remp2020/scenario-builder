@@ -162,6 +162,8 @@ class NodeWidget extends React.Component {
         />
 
         <Dialog
+          fullWidth={true}
+          maxWidth='md'
           open={this.state.dialogOpened}
           onClose={this.closeDialog}
           aria-labelledby='form-dialog-title'
@@ -202,7 +204,7 @@ class NodeWidget extends React.Component {
             </Grid>
 
             <Grid container spacing={3} alignItems='flex-end'>
-              <Grid item xs={8}>
+              <Grid item xs={12}>
                 <SegmentSelector
                     selectedSegment={this.state.selectedSegment}
                     selectedSegmentSourceTable={this.state.selectedSegmentSourceTable}
@@ -211,22 +213,20 @@ class NodeWidget extends React.Component {
                 >
                 </SegmentSelector>
               </Grid>
-              <Grid item xs={4} style={{textAlign: 'right', paddingBottom: '4px'}}>
-                <Button
-                  variant='contained'
-                  color='primary'
-                  size='small'
-                  style={{ position: 'relative', bottom: '10px' }}
-                  onClick={this.handleNewSegmentClick}
-                >
-                  <Icon style={{ marginRight: '5px' }}>add_circle</Icon>
-                  New segment
-                </Button>
-              </Grid>
             </Grid>
           </DialogContent>
 
           <DialogActions>
+            <Button 
+              variant='contained'
+              color='primary'
+              size='small'
+              onClick={this.handleNewSegmentClick}
+            >
+              <Icon style={{ marginRight: '5px' }}>add_circle</Icon>
+              New segment
+            </Button>
+
             <Button
               color='secondary'
               onClick={() => {
