@@ -170,7 +170,7 @@ class NodeWidget extends React.Component {
           <DialogContent>
             <DialogContentText>Sends an email to user.</DialogContentText>
 
-            <Grid container spacing={32}>
+            <Grid container>
               <Grid item xs={6}>
                 <TextField
                   margin='normal'
@@ -187,7 +187,7 @@ class NodeWidget extends React.Component {
               </Grid>
             </Grid>
 
-            <Grid container spacing={32}>
+            <Grid container>
               <Grid item xs={12}>
                 <MaterialSelect
                   options={this.transformOptionsForSelect()}

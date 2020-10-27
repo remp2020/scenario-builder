@@ -7,7 +7,8 @@ import uuidv4 from 'uuid/v4';
 export function emptyNode() {
 	return {
 		id: uuidv4(),
-		key: ''
+		key: '',
+		values: {},
 	};
 }
 
@@ -21,6 +22,15 @@ export function actionSetNodeValues(nodeId, values) {
 	};
 }
 
+export function actionUpdateNodeValues(nodeId, values) {
+	return {
+		type: 'UPDATE_NODE_VALUES',
+		payload: {
+			values: values,
+			nodeId: nodeId,
+		}
+	};
+}
 export function actionSetKeyForNode(nodeId, key) {
 	return {
 		type: 'SET_KEY_FOR_NODE',
@@ -55,6 +65,18 @@ export function actionSetEvent(event) {
 
 export function reducer(state, action) {
 	switch (action.type) {
+		case 'UPDATE_NODE_VALUES':
+			return {
+				...state, nodes: state.nodes.map(node => {
+					if (node.id === action.payload.nodeId) {
+						return {
+							...node,
+							values: Object.assign(node.values, action.payload.values)
+						};
+					}
+					return node;
+				})
+			};
 		case 'SET_NODE_VALUES':
 			return {
 				...state, nodes: state.nodes.map(node => {
@@ -85,7 +107,7 @@ export function reducer(state, action) {
 				if (action.payload.nodeId === node.id) return {
 					id: node.id,
 					key: action.payload.key,
-					values: [], // reset values, TODO: add default value depending on key type
+					values: {}, // reset values, TODO: add default value depending on key type
 				};
 				return node;
 			});

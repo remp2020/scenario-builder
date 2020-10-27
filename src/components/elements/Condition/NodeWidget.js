@@ -152,7 +152,7 @@ class NodeWidget extends React.Component {
           </DialogTitle>
 
           <DialogContent>
-            <Grid container spacing={32}>
+            <Grid container>
               <Grid style={{marginBottom: '10px'}} item xs={6}>
                 <TextField
                   margin='normal'
