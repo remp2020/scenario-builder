@@ -10,11 +10,16 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import groupBy from 'lodash/groupBy';
+import { styled } from '@material-ui/core/styles';
 
 import { PortWidget } from '../../widgets/PortWidget';
 import StatisticsTooltip from '../../StatisticTooltip';
 import MaterialSelect from '../../MaterialSelect';
 import { setCanvasZoomingAndPanning } from '../../../actions';
+
+const PreviewEmailButton = styled(Button)({
+  marginRight: 'auto'
+});
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -187,14 +192,14 @@ class NodeWidget extends React.Component {
               </Grid>
             </Grid>
 
-            <Grid container>
+            <Grid container alignItems='center' alignContent='space-between'>
               <Grid item xs={12}>
                 <MaterialSelect
                   options={this.transformOptionsForSelect()}
                   value={this.getFormatedValue()}
                   onChange={event => {
                     this.setState({
-                      selectedMail: event.value
+                      selectedMail: event.value,
                     });
                   }}
                   placeholder='Pick one'
@@ -205,6 +210,12 @@ class NodeWidget extends React.Component {
           </DialogContent>
 
           <DialogActions>
+            {this.props.mails.filter(mail => mail.link && mail.code === this.state.selectedMail).map(item => 
+              <PreviewEmailButton color='primary' href={item.link} target="_blank">
+                <ActionIcon style={{ marginRight: '5px' }}/>Preview
+              </PreviewEmailButton>
+            )}
+            
             <Button
               color='secondary'
               onClick={() => {

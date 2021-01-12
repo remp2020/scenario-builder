@@ -21,7 +21,7 @@ export class NodeModel extends BaseNodeModel {
   serialize() {
     return _.merge(super.serialize(), {
       name: this.name,
-      selectedMail: this.selectedMail
+      selectedMail: this.selectedMail,
     });
   }
 }
