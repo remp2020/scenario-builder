@@ -17,6 +17,11 @@ import { PortWidget } from '../../widgets/PortWidget';
 import { setCanvasZoomingAndPanning } from '../../../actions';
 import SegmentSelector from './SegmentSelector';
 import * as config from '../../../config';
+import { styled } from '@material-ui/core/styles';
+
+const NewSegmentButton = styled(Button)({
+  marginRight: 'auto'
+});
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -217,15 +222,13 @@ class NodeWidget extends React.Component {
           </DialogContent>
 
           <DialogActions>
-            <Button 
-              variant='contained'
+            <NewSegmentButton 
               color='primary'
-              size='small'
               onClick={this.handleNewSegmentClick}
             >
               <Icon style={{ marginRight: '5px' }}>add_circle</Icon>
               New segment
-            </Button>
+            </NewSegmentButton>
 
             <Button
               color='secondary'
