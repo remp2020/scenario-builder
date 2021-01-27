@@ -98,6 +98,18 @@ export class ExportService {
           )
         }
       };
+    } else if (node.type === 'generic') {
+      return {
+        id: node.id,
+        name: node.name ? node.name : '',
+        type: 'generic',
+        generic: {
+          code: node.selectedGeneric,
+          descendants: this.getAllChildrenNodes(node).map(descendantNode =>
+            this.formatDescendant(descendantNode, node)
+          )
+        }
+      };
     } else if (node.type === 'condition') {
       return {
         id: node.id,

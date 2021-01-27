@@ -6,6 +6,7 @@ import BeforeTriggersReducer from './BeforeTriggersReducer';
 import CanvasReducer from './CanvasReducer';
 import ScenarioReducer from './ScenarioReducer';
 import MailsReducer from './MailsReducer';
+import GenericsReducer from './GenericsReducer';
 import GoalsReducer from './GoalsReducer';
 import BannersReducer from './BannersReducer';
 
@@ -17,6 +18,7 @@ export default combineReducers({
   criteria: CriteriaReducer,
   scenario: ScenarioReducer,
   mails: MailsReducer,
+  generics: GenericsReducer,
   goals: GoalsReducer,
   banners: BannersReducer,
 });

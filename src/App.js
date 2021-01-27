@@ -13,7 +13,8 @@ import {
   fetchCriteria,
   fetchScenario,
   setScenarioName,
-  fetchMails
+  fetchMails,
+  fetchGenerics
 } from './actions';
 
 class App extends Component {
@@ -26,6 +27,7 @@ class App extends Component {
     dispatch(fetchTriggers());
     dispatch(fetchBeforeTriggers());
     dispatch(fetchMails());
+    dispatch(fetchGenerics());
 
     if (config.BANNER_ENABLED) {
       dispatch(fetchBanners());

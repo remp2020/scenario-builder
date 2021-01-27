@@ -1,7 +1,7 @@
 import flatMap from 'lodash/flatMap';
 
 // import the custom models
-import {Banner, Email, Segment, Trigger, Wait, Goal, Condition, BeforeTrigger} from './../components/elements';
+import {Banner, Email, Segment, Trigger, Wait, Goal, Condition, BeforeTrigger, Generic} from './../components/elements';
 import { BANNER_ENABLED } from './../config';
 
 function minutesToTimeUnit(minutes) {
@@ -61,6 +61,11 @@ export class RenderService {
 
         element.selectedMail = element.email.code;
         node = new Email.NodeModel(element);
+
+      } else if (element.type === 'generic') {
+
+        element.selectedGeneric = element.generic.code;
+        node = new Generic.NodeModel(element);
 
       } else if (element.type === 'wait') {
 
