@@ -16,6 +16,7 @@ export const URL_SEGMENTS_INDEX = `${CRM_HOST}/api/v1/segments/list`;
 export const URL_TRIGGERS_INDEX = `${CRM_HOST}/api/v1/events/list`;
 export const URL_BEFORE_TRIGGERS_INDEX = `${CRM_HOST}/api/v1/event-generators/list`;
 export const URL_MAILS_INDEX = `${CRM_HOST}/api/v1/mail-template/list`;
+export const URL_GENERICS_INDEX = `${CRM_HOST}/api/v1/scenarios/generics`;
 export const URL_GOALS_INDEX = `${CRM_HOST}/api/v1/onboarding-goals/list`;
 export const URL_BANNERS_INDEX = `${CRM_HOST}/api/v1/remp/list-banners`;
 export const URL_ELEMENT_TOOLTIP = `${CRM_HOST}/api/v1/scenarios/element`;

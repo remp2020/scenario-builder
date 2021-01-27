@@ -15,6 +15,7 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import EmailIcon from '@material-ui/icons/Mail';
+import ExtensionIcon from '@material-ui/icons/Extension';
 import BannerIcon from '@material-ui/icons/Adjust';
 import TriggerIcon from '@material-ui/icons/Notifications';
 import WaitIcon from '@material-ui/icons/AccessAlarmsOutlined';
@@ -27,7 +28,7 @@ import * as config from './../../config';
 import { TrayItemWidget } from './TrayItemWidget';
 import { ExportService } from '../../services/ExportService';
 import Notification from '../Notification';
-import { Email, Segment, Trigger, BeforeTrigger, Wait, Goal, Banner, Condition } from './../elements';
+import { Email, Generic, Segment, Trigger, BeforeTrigger, Wait, Goal, Banner, Condition } from './../elements';
 import {
   setScenarioId,
   setScenarioName,
@@ -354,6 +355,12 @@ class BodyWidget extends React.Component {
                 icon={<EmailIcon />}
               />
 
+              <TrayItemWidget
+                model={{ type: 'generic' }}
+                name='Run generic action'
+                icon={<ExtensionIcon />}
+              />
+
               {config.BANNER_ENABLED &&
                 <TrayItemWidget
                   model={{ type: 'banner' }}
@@ -415,6 +422,8 @@ class BodyWidget extends React.Component {
                 var node = null;
                 if (data.type === 'email') {
                   node = new Email.NodeModel({});
+                } else if (data.type === 'generic') {
+                  node = new Generic.NodeModel({});
                 } else if (data.type === 'banner') {
                   node = new Banner.NodeModel({
                     expiresInUnit: 'days',

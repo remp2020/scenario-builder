@@ -5,6 +5,7 @@ import {
   SimplePortFactory,
   Banner,
   Email,
+  Generic,
   Segment,
   Trigger,
   BeforeTrigger,
@@ -57,6 +58,11 @@ export class Application {
       new SimplePortFactory('email', config => new Email.PortModel())
     );
     this.diagramEngine.registerNodeFactory(new Email.NodeFactory());
+
+    this.diagramEngine.registerPortFactory(
+      new SimplePortFactory('generic', config => new Generic.PortModel())
+    );
+    this.diagramEngine.registerNodeFactory(new Generic.NodeFactory());
 
     this.diagramEngine.registerPortFactory(
       new SimplePortFactory('segment', config => new Segment.PortModel())
