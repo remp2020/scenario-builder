@@ -11,7 +11,8 @@ import {
   BeforeTrigger,
   Wait,
   Goal,
-  Condition
+  Condition,
+  PushNotification
 } from './elements';
 
 import './sass/main.scss';
@@ -101,6 +102,12 @@ export class Application {
       new SimplePortFactory('condition', config => new Condition.PortModel())
     );
     this.diagramEngine.registerNodeFactory(new Condition.NodeFactory());
+
+    // Notification
+    this.diagramEngine.registerPortFactory(
+      new SimplePortFactory('push_notification', config => new PushNotification.PortModel())
+    );
+    this.diagramEngine.registerNodeFactory(new PushNotification.NodeFactory());
   }
 
   getActiveDiagram() {

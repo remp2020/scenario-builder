@@ -9,5 +9,6 @@ import * as BeforeTrigger from './BeforeTrigger';
 import * as Wait from './Wait';
 import * as Goal from './Goal';
 import * as Condition from './Condition';
+import * as PushNotification from './PushNotification';
 
-export { SimplePortFactory, Email, Banner, Generic, Segment, Trigger, BeforeTrigger, Wait, Goal, Condition };
+export { SimplePortFactory, Email, Banner, Generic, Segment, Trigger, BeforeTrigger, Wait, Goal, Condition, PushNotification};

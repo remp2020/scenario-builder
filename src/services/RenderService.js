@@ -1,7 +1,18 @@
 import flatMap from 'lodash/flatMap';
 
 // import the custom models
-import {Banner, Email, Segment, Trigger, Wait, Goal, Condition, BeforeTrigger, Generic} from './../components/elements';
+import {
+  Banner,
+  Email,
+  Segment,
+  Trigger,
+  Wait,
+  Goal,
+  Condition,
+  BeforeTrigger,
+  Generic,
+  PushNotification
+} from './../components/elements';
 import { BANNER_ENABLED } from './../config';
 
 function minutesToTimeUnit(minutes) {
@@ -104,6 +115,13 @@ export class RenderService {
         element.selectedGoals = element.goal.codes;
 
         node = new Goal.NodeModel(element);
+
+      } else if (element.type === 'push_notification') {
+
+        element.selectedTemplate = element.push_notification.template;
+        element.selectedApplication = element.push_notification.application;
+
+        node = new PushNotification.NodeModel(element);
       }
 
       this.activeModel.addNode(node);

@@ -186,6 +186,20 @@ export class ExportService {
         type: 'goal',
         goal: goalProperties,
       };
+    } else if (node.type === 'push_notification') {
+      return {
+        id: node.id,
+        name: node.name ? node.name : '',
+        type: 'push_notification',
+        push_notification: {
+          template: node.selectedTemplate,
+          application: node.selectedApplication,
+          descendants: this.getAllChildrenNodes(node).map(descendantNode =>
+            this.formatDescendant(descendantNode, node)
+          )
+        },
+
+      }
     }
   }
 

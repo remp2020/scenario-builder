@@ -8,3 +8,4 @@ export * from './GoalsActions';
 export * from './BannersActions';
 export * from './CriteriaActions';
 export * from './BeforeTriggersActions';
+export * from './PushNotificationActions';

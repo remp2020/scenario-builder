@@ -14,7 +14,8 @@ import {
   fetchScenario,
   setScenarioName,
   fetchMails,
-  fetchGenerics
+  fetchGenerics,
+  fetchPushNotifications
 } from './actions';
 
 class App extends Component {
@@ -31,6 +32,10 @@ class App extends Component {
 
     if (config.BANNER_ENABLED) {
       dispatch(fetchBanners());
+    }
+
+    if (config.PUSH_NOTIFICATION_ENABLED) {
+      dispatch(fetchPushNotifications());
     }
 
     if (config.SCENARIO_ID) {

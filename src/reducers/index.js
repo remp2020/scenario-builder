@@ -9,6 +9,7 @@ import MailsReducer from './MailsReducer';
 import GenericsReducer from './GenericsReducer';
 import GoalsReducer from './GoalsReducer';
 import BannersReducer from './BannersReducer';
+import PushNotificationsReducer from './PushNotificationsReducer';
 
 export default combineReducers({
   segments: SegmentsReducer,
@@ -21,4 +22,5 @@ export default combineReducers({
   generics: GenericsReducer,
   goals: GoalsReducer,
   banners: BannersReducer,
+  pushNotifications: PushNotificationsReducer,
 });
