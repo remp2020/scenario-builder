@@ -23,12 +23,13 @@ import SegmentIcon from '@material-ui/icons/SubdirectoryArrowRight';
 import ConditionIcon from '@material-ui/icons/CallSplit';
 import GoalIcon from '@material-ui/icons/CheckBox';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import PushNotificationIcon from '@material-ui/icons/PhonelinkRing';
 
 import * as config from './../../config';
 import { TrayItemWidget } from './TrayItemWidget';
 import { ExportService } from '../../services/ExportService';
 import Notification from '../Notification';
-import { Email, Generic, Segment, Trigger, BeforeTrigger, Wait, Goal, Banner, Condition } from './../elements';
+import { Email, Generic, Segment, Trigger, BeforeTrigger, Wait, Goal, Banner, Condition, PushNotification } from './../elements';
 import {
   setScenarioId,
   setScenarioName,
@@ -368,7 +369,15 @@ class BodyWidget extends React.Component {
                   icon={<BannerIcon />}
                 />
               }
-              
+
+              {config.PUSH_NOTIFICATION_ENABLED &&
+                <TrayItemWidget
+                  model={{ type: 'push_notification' }}
+                  name='Send notification'
+                  icon={<PushNotificationIcon />}
+                />
+              }
+
             </List>
 
             <List
@@ -429,6 +438,8 @@ class BodyWidget extends React.Component {
                     expiresInUnit: 'days',
                     expiresInTime: 1,
                   });
+                } else if (data.type === 'push_notification') {
+                  node = new PushNotification.NodeModel({});
                 } else if (data.type === 'segment') {
                   node = new Segment.NodeModel({});
                 } else if (data.type === 'condition') {

@@ -9,6 +9,7 @@ export const MAILS_CHANGED = 'mails_changed';
 export const GOALS_CHANGED = 'goals_changed';
 export const BANNERS_CHANGED = 'banners_changed';
 export const GENERICS_CHANGED = 'generics_changed';
+export const PUSH_NOTIFICATIONS_CHANGED = 'push_notifications_changed';
 
 export const CANVAS_ZOOMABLE = 'canvas_zoomable';
 export const CANVAS_PANNABLE = 'canvas_pannable';
