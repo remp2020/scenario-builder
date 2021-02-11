@@ -4,7 +4,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { actionSetNodeValues } from '../criteriaReducer';
+import { actionSetParamValues } from './actions';
 
 const elementStyles = makeStyles(theme => ({
   // Puts visually OR/AND between tags
@@ -82,10 +82,10 @@ const filterOptions = createFilterOptions({
 });
 
 export default function StringLabeledArrayParam(props) {
-  const classes = elementStyles({operator: props.params.operator});
+  const classes = elementStyles({operator: props.blueprint.operator});
   const handleChange = (event, values) => {
-    props.dispatch(actionSetNodeValues(props.node.id, {
-      operator: props.params.operator, // TODO add ability to change operator
+    props.dispatch(actionSetParamValues(props.name, {
+      operator: props.blueprint.operator, // TODO add ability to change operator
       selection: values.map(item => {
         if (typeof(item) === 'string') {
           // free-solo value
@@ -107,18 +107,18 @@ export default function StringLabeledArrayParam(props) {
             root: classes.chipRoot
           }
         }}
-        options={props.params.options}
+        options={props.blueprint.options}
         getOptionLabel={optionLabel}
         onChange={handleChange}
-        value={selectedOptions(props.node.values.selection, props.params.options)}
-        freeSolo={props.params.freeSolo}
+        value={selectedOptions(props.values.selection, props.blueprint.options)}
+        freeSolo={props.blueprint.freeSolo}
         groupBy={optionGroup}
         filterOptions={filterOptions}
         renderInput={params => (
           <TextField
             {...params}
             variant="standard"
-            label={props.params.label}
+            label={props.blueprint.label}
             placeholder=""
             fullWidth
           />
@@ -134,9 +134,11 @@ export default function StringLabeledArrayParam(props) {
 }
 
 StringLabeledArrayParam.propTypes = {
-  // node = {values: {selection: ['city_1'], operator: 'or'}, key: 'type', id: '1'}
-  node: PropTypes.object.isRequired,
-  // params = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1', subtitle: '(best city)' group: 'Group 1'}], operator: 'or', freeSolo: true}
-  params: PropTypes.object.isRequired,
+  // name identifying input (same function as in HTML <input>), used in dispatch
+  name: PropTypes.any.isRequired,
+  // values = {selection: ['city_1'], operator: 'or'}
+  values: PropTypes.object.isRequired,
+  // blueprint = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1', subtitle: '(best city)' group: 'Group 1'}], operator: 'or', freeSolo: true}
+  blueprint: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
 };

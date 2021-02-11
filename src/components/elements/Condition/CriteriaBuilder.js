@@ -7,31 +7,47 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
 import { Card, CardContent, FormControl, InputLabel, Select, MenuItem, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import StringLabeledArrayParam from './CriteriaTypes/StringLabeledArrayParam';
-import BooleanParam from './CriteriaTypes/BooleanParam';
-import NumberParam from './CriteriaTypes/NumberParam';
+import StringLabeledArrayParam from '../params/StringLabeledArrayParam';
+import BooleanParam from '../params/BooleanParam';
+import NumberParam from '../params/NumberParam';
 import { emptyNode, reducer, actionSetEvent, actionSetKeyForNode, actionAddCriterion, actionDeleteNode } from './criteriaReducer';
 
 const BuilderDispatch = React.createContext(null);
 
 ////////////////////
-// CriteriaParams
+// CriterionParam
 ////////////////////
 
-// Props - node, params
-function CriteriaParams(props) {
+// Props - node, blueprint
+function CriterionParam(props) {
   const dispatch = useContext(BuilderDispatch);
-  let typeParams = props.params[props.node.key];
-  switch (typeParams.type) {
+
+  let param = props.node.params.filter(param => param.key === props.blueprint.key)[0];
+  // input name identifying both criterion (using artifically generated ID) and its param (using param's key)
+  let name = [props.node.id, param.key];
+
+  switch (props.blueprint.type) {
     case 'string_labeled_array':
-      return (<StringLabeledArrayParam node={props.node} params={typeParams} dispatch={dispatch}></StringLabeledArrayParam>);
+      return (<StringLabeledArrayParam name={name} values={param.values} blueprint={props.blueprint} dispatch={dispatch}></StringLabeledArrayParam>);
     case 'boolean':
-      return (<BooleanParam node={props.node} params={typeParams} dispatch={dispatch}></BooleanParam>);
+      return (<BooleanParam name={name} values={param.values} blueprint={props.blueprint} dispatch={dispatch}></BooleanParam>);
     case 'number':
-      return (<NumberParam node={props.node} params={typeParams} dispatch={dispatch}></NumberParam>);
+      return (<NumberParam name={name} values={param.values} blueprint={props.blueprint} dispatch={dispatch}></NumberParam>);
     default:
-      throw new Error("unsupported node type " + typeParams.type);
+      throw new Error("unsupported node type " + props.blueprint.type);
   }
+}
+
+// Props - node, blueprint
+function CriterionParams(props) {
+  return (
+    <>
+      {props.blueprint.map(paramBlueprint => (
+        // key is required by React here (not used in CriterionParam)
+        <CriterionParam key={paramBlueprint.key} node={props.node} blueprint={paramBlueprint}></CriterionParam>
+      ))}
+    </>
+  )
 }
 
 ////////////////////
@@ -50,7 +66,8 @@ const useCriteriaFormStyles = makeStyles({
   },
 });
 
-// Props - node, criteria
+
+// Props - node, criteriaBlueprint
 function CriteriaForm(props) {
   const classes = useCriteriaFormStyles();
   const dispatch = useContext(BuilderDispatch);
@@ -59,15 +76,24 @@ function CriteriaForm(props) {
     <Card>
       <CardContent className={classes.cardContent}>
         <FormControl className={classes.formControl}>
-          <InputLabel id="select-criteria-label">Criteria</InputLabel>
+          <InputLabel id="select-criteria-label">Criterion</InputLabel>
           <Select
             labelId="select-criteria-label"
             id="select-criteria"
             placeholder="Select criteria"
             value={props.node.key}
-            onChange={e => dispatch(actionSetKeyForNode(props.node.id, e.target.value))}
+            onChange={e => {
+                let criterionBlueprint = props.criteriaBlueprint.filter(cb => cb.key === e.target.value)[0];
+                let params = criterionBlueprint.params.map(criterionParam => ({
+                  key: criterionParam.key,
+                  // TODO: load default 'values' structure according to criterion param type
+                  values: {}
+                }))
+                dispatch(actionSetKeyForNode(props.node.id, e.target.value, params));
+              }
+            }
           >
-            {props.criteria.map(cr => (
+            {props.criteriaBlueprint.map(cr => (
               <MenuItem key={cr.key} value={cr.key}>{cr.label}</MenuItem>
             ))}
           </Select>
@@ -82,10 +108,10 @@ function CriteriaForm(props) {
 
       { props.node.key &&
         <CardContent>
-          <CriteriaParams 
+          <CriterionParams 
             node={props.node} 
-            params={props.criteria.filter(cr => cr.key === props.node.key)[0].params}>
-          </CriteriaParams>
+            blueprint={props.criteriaBlueprint.filter(cr => cr.key === props.node.key)[0].params}>
+          </CriterionParams>
         </CardContent>
       }
     </Card>
@@ -106,7 +132,7 @@ const useCriteriaTableStyles = makeStyles({
   }
 });
 
-// Props - blueprint, nodes
+// Props - criteriaBlueprint, nodes
 function CriteriaTable(props) {
   const classes = useCriteriaTableStyles();
   const dispatch = useContext(BuilderDispatch);
@@ -121,7 +147,7 @@ function CriteriaTable(props) {
           <Grid item xs={12}>
             <CriteriaForm
               node={node}
-              criteria={props.blueprint.criteria}>
+              criteriaBlueprint={props.criteriaBlueprint}>
             </CriteriaForm>
           </Grid>
         </React.Fragment>
@@ -129,7 +155,7 @@ function CriteriaTable(props) {
 
       <Grid item xs={12}>
         <Button onClick={() => dispatch(actionAddCriterion())} className={classes.button} startIcon={<AddIcon />}>
-          Add new criteria
+          Add new criterion
         </Button>
       </Grid>
     </>
@@ -181,7 +207,7 @@ function CriteriaBuilder(props, ref) {
         {criteria.filter(cb => cb.event === state.event).map(criteriaBlueprint => (
             <CriteriaTable 
               key={criteriaBlueprint.event} 
-              blueprint={criteriaBlueprint}
+              criteriaBlueprint={criteriaBlueprint.criteria}
               nodes={state.nodes}></CriteriaTable>
           )
         )}

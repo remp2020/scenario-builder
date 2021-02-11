@@ -8,35 +8,19 @@ export function emptyNode() {
 	return {
 		id: uuidv4(),
 		key: '',
-		values: {},
+		params: [],
 	};
 }
 
-export function actionSetNodeValues(nodeId, values) {
-	return {
-		type: 'SET_NODE_VALUES',
-		payload: {
-			values: values,
-			nodeId: nodeId,
-		}
-	};
-}
-
-export function actionUpdateNodeValues(nodeId, values) {
-	return {
-		type: 'UPDATE_NODE_VALUES',
-		payload: {
-			values: values,
-			nodeId: nodeId,
-		}
-	};
-}
-export function actionSetKeyForNode(nodeId, key) {
+export function actionSetKeyForNode(nodeId, criterionKey, criterionParams) {
 	return {
 		type: 'SET_KEY_FOR_NODE',
 		payload: {
-			key: key,
+			key: criterionKey,
 			nodeId: nodeId,
+			// Criterion params are associated with key, 
+			// but since we do not have access to blueprint here, request criterionParams as additional parameter
+			params: criterionParams 
 		}
 	};
 }
@@ -65,30 +49,45 @@ export function actionSetEvent(event) {
 
 export function reducer(state, action) {
 	switch (action.type) {
-		case 'UPDATE_NODE_VALUES':
+		// params actions
+		case 'UPDATE_PARAM_VALUES': {
+			let [nodeId, paramKey] = action.payload.name;
 			return {
 				...state, nodes: state.nodes.map(node => {
-					if (node.id === action.payload.nodeId) {
+					if (node.id === nodeId) {
 						return {
-							...node,
-							values: Object.assign(node.values, action.payload.values)
+							...node, params: node.params.map(param => {
+								if (param.key === paramKey) {
+									return {...param, values: Object.assign(param.values, action.payload.values)};
+								}
+								return param;
+							})
 						};
 					}
 					return node;
 				})
 			};
-		case 'SET_NODE_VALUES':
+		}
+		case 'SET_PARAM_VALUES': {
+			let [nodeId, paramKey] = action.payload.name;
 			return {
 				...state, nodes: state.nodes.map(node => {
-					if (node.id === action.payload.nodeId) {
+					if (node.id === nodeId) {
 						return {
-							...node,
-							values: action.payload.values
+							...node, params: node.params.map(param => {
+								if (param.key === paramKey) {
+									return {...param, values: action.payload.values};
+								}
+								return param;
+							})
 						};
 					}
 					return node;
 				})
 			};
+		}
+
+		// internal criteriaReducer actions
 		case 'SET_EVENT':
 			// this also resets nodes state
 			return {
@@ -102,18 +101,21 @@ export function reducer(state, action) {
 			return {
 				...state, nodes: state.nodes.filter(n => n.id !== action.payload.nodeId)
 			};
-		case 'SET_KEY_FOR_NODE':
+		case 'SET_KEY_FOR_NODE': {
 			let newNodes = state.nodes.map(node => {
 				if (action.payload.nodeId === node.id) return {
 					id: node.id,
 					key: action.payload.key,
-					values: {}, // reset values, TODO: add default value depending on key type
+					// TODO: load params from blueprint without needing them in a payload (since they are associated with a criteria key)
+					params: action.payload.params, 
 				};
 				return node;
 			});
 			return {
 				...state, nodes: newNodes
 			};
+		}
+			
 		default:
 			throw new Error("unsupported action type " + action.type);
 	}

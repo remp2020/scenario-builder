@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
-import { actionSetNodeValues, actionUpdateNodeValues } from '../criteriaReducer';
+import { actionSetParamValues, actionUpdateParamValues } from './actions';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -22,55 +22,57 @@ export default function NumberParam(props) {
   const classes = useStyles();
 
   // if only one operator, select it by default
-  if (props.node.values.operator === undefined && props.params.operators.length === 1) {
-    props.dispatch(actionSetNodeValues(props.node.id, {
-      operator: props.params.operators[0]
+  if (props.values.operator === undefined && props.blueprint.operators.length === 1) {
+    props.dispatch(actionSetParamValues(props.name, {
+      operator: props.blueprint.operators[0]
     }));
   }
 
   const handleOperatorChange = (event) => {
-    props.dispatch(actionUpdateNodeValues(props.node.id, {
+    props.dispatch(actionUpdateParamValues(props.name, {
       operator: event.target.value
     }));
   };
 
   const handleInputChange = (event) => {
-    props.dispatch(actionUpdateNodeValues(props.node.id, {
+    props.dispatch(actionUpdateParamValues(props.name, {
       selection: event.target.value
     }));
   };
   
   return (
     <React.Fragment>
-      <FormControl className={classes.formControl} disabled={props.params.operators.length === 1}>
+      <FormControl className={classes.formControl} disabled={props.blueprint.operators.length === 1}>
           <InputLabel>Operator</InputLabel>
           <Select
             autoWidth
-            value={props.node.values.operator ?? ''}
+            value={props.values.operator ?? ''}
             onChange={handleOperatorChange}
           >
-            {props.params.operators.map(op => (
+            {props.blueprint.operators.map(op => (
               <MenuItem key={op} value={op}>{op}</MenuItem>
             ))}
           </Select>
       </FormControl>
 
       <TextField className={classes.numberInput}
-          label={props.params.unit}
+          label={props.blueprint.unit}
           type="number"
           onChange={handleInputChange}
-          value={props.node.values.selection ?? ''}
+          value={props.values.selection ?? ''}
           // attributes passed down to <input> HTML tag
-          inputProps={props.params.numberInputAttributes ?? {}}
+          inputProps={props.blueprint.numberInputAttributes ?? {}}
         />
     </React.Fragment>
   );
 }
 
 NumberParam.propTypes = {
-    // node = {values: {selection: 3, operator: '>'}, key: 'type_of_number_condition', id: '1'}
-    node: PropTypes.object.isRequired,
-    // params = {label: 'Subscription type length', type: 'number', 'operators': ['=', '<', '>'], unit: 'Day(s)', numberInputAttributes: {min: 0}}
-    params: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
+  // name identifying input (same function as in HTML <input>), used in dispatch
+  name: PropTypes.any.isRequired,
+  // values = {selection: 3, operator: '>'}
+  values: PropTypes.object.isRequired,
+  // blueprint = {label: 'Subscription type length', type: 'number', 'operators': ['=', '<', '>'], unit: 'Day(s)', numberInputAttributes: {min: 0}}
+  blueprint: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
