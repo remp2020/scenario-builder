@@ -31,9 +31,9 @@ export default function BooleanParam(props) {
 BooleanParam.propTypes = {
   // name identifying input (same function as in HTML <input>), used in dispatch
   name: PropTypes.any.isRequired,
-  // values = {selection: true}
+  // values, example: {selection: true}
   values: PropTypes.object.isRequired,
-  // blueprint = {label: 'Is recurrent', type: 'boolean'}
+  // blueprint, example: {label: 'Is recurrent', type: 'boolean'}
   blueprint: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
 };

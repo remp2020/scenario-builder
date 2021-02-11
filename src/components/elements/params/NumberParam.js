@@ -70,9 +70,9 @@ export default function NumberParam(props) {
 NumberParam.propTypes = {
   // name identifying input (same function as in HTML <input>), used in dispatch
   name: PropTypes.any.isRequired,
-  // values = {selection: 3, operator: '>'}
+  // values, example: {selection: 3, operator: '>'}
   values: PropTypes.object.isRequired,
-  // blueprint = {label: 'Subscription type length', type: 'number', 'operators': ['=', '<', '>'], unit: 'Day(s)', numberInputAttributes: {min: 0}}
+  // blueprint, example: {label: 'Subscription type length', type: 'number', 'operators': ['=', '<', '>'], unit: 'Day(s)', numberInputAttributes: {min: 0}}
   blueprint: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
 };

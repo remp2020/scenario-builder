@@ -136,9 +136,9 @@ export default function StringLabeledArrayParam(props) {
 StringLabeledArrayParam.propTypes = {
   // name identifying input (same function as in HTML <input>), used in dispatch
   name: PropTypes.any.isRequired,
-  // values = {selection: ['city_1'], operator: 'or'}
+  // values, example: {selection: ['city_1'], operator: 'or'}
   values: PropTypes.object.isRequired,
-  // blueprint = {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1', subtitle: '(best city)' group: 'Group 1'}], operator: 'or', freeSolo: true}
+  // blueprint, example: {label: 'Cities', type: 'string_labeled_array', options: [{value: 'city_1', label: 'City 1', subtitle: '(best city)' group: 'Group 1'}], operator: 'or', freeSolo: true}
   blueprint: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
