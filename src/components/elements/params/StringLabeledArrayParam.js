@@ -23,6 +23,9 @@ const elementStyles = makeStyles(theme => ({
   subtitle: {
     paddingLeft: '6px',
     color: theme.palette.grey[600]
+  },
+  autocomplete: {
+    marginBottom: theme.spacing(1),
   }
 }));
 
@@ -120,6 +123,7 @@ export default function StringLabeledArrayParam(props) {
             variant="standard"
             label={props.blueprint.label}
             placeholder=""
+            className={classes.autocomplete}
             fullWidth
           />
         )}

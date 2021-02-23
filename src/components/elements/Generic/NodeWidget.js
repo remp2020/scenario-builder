@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ActionIcon from '@material-ui/icons/Extension';
@@ -16,6 +17,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { setCanvasZoomingAndPanning } from "../../../actions";
 import { withStyles } from '@material-ui/core/styles';
 import { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import OptionsForm from "./OptionsForm";
 
 const styles = theme => ({
   autocomplete: {
@@ -40,6 +42,10 @@ const filterOptions = createFilterOptions({
 class NodeWidget extends React.Component {
   constructor(props) {
     super(props);
+
+    // Use it to access CriteriaBuilder state
+    this.optionsFormRef = React.createRef();
+
     this.state = {
       nodeFormName: this.props.node.name,
       selectedGeneric: this.props.node.selectedGeneric,
@@ -87,12 +93,28 @@ class NodeWidget extends React.Component {
     this.setState({ anchorElementForTooltip: null });
   };
 
-  getFormatedValue = () => {
+  getSelectedGeneric = () => {
     const match = this.props.generics.find(generic => {
       return generic.code === this.state.selectedGeneric;
     });
 
     return match ? match : null;
+  };
+
+  getSelectedGenericOptionBlueprints = () => {
+    const generic = this.getSelectedGeneric();
+
+    let blueprints = [];
+    if (generic !== null && generic.options !== null) {
+      _.forOwn(generic.options, function(value, key) {
+        blueprints.push({
+          key: key,
+          blueprint: value
+        });
+      });
+    }
+
+    return blueprints;
   };
 
   // maybe refactor to more effective way if is a problem
@@ -109,12 +131,9 @@ class NodeWidget extends React.Component {
     return generics;
   };
 
-  getSelectedGenericValue = () => {
-    const selected = this.props.generics.find(
-      generic => generic.code === this.props.node.selectedGeneric
-    );
-
-    return selected ? ` - ${selected.label}` : '';
+  getSelectedGenericDefaultLabel = () => {
+    const generic = this.getSelectedGeneric();
+    return generic ? ` - ${generic.label}` : '';
   };
 
   render() {
@@ -147,7 +166,7 @@ class NodeWidget extends React.Component {
           <div className={this.bem('__name')}>
             {this.props.node.name
               ? this.props.node.name
-              : `Generic ${this.getSelectedGenericValue()}`}
+              : `Generic ${this.getSelectedGenericDefaultLabel()}`}
           </div>
         </div>
 
@@ -189,9 +208,11 @@ class NodeWidget extends React.Component {
             <Grid container alignItems='center' alignContent='space-between'>
               <Grid item xs={12}>
                 <Autocomplete
-                  value={this.getFormatedValue()}
+                  value={this.getSelectedGeneric()}
                   options={this.transformOptionsForSelect()}
                   getOptionLabel={(option) => option.label}
+                  getOptionSelected={(option, value) => option.key === value.key}
+                  disableClearable={true}
                   filterOptions={filterOptions}
                   onChange={(event, selectedOption) => {
                     if (selectedOption !== null) {
@@ -212,6 +233,19 @@ class NodeWidget extends React.Component {
                 />
               </Grid>
             </Grid>
+
+            {this.state.selectedGeneric && this.getSelectedGenericOptionBlueprints().length > 0 &&
+              <Grid container alignItems='center' alignContent='space-between'>
+                <Grid item xs={12}>
+                  <p>Options</p>
+                  <OptionsForm
+                    options={this.props.node.options}
+                    blueprints={this.getSelectedGenericOptionBlueprints()}
+                    ref={this.optionsFormRef}
+                  />
+                </Grid>
+              </Grid>
+            }
           </DialogContent>
 
           <DialogActions>
@@ -231,6 +265,7 @@ class NodeWidget extends React.Component {
 
                 this.props.node.name = this.state.nodeFormName;
                 this.props.node.selectedGeneric = this.state.selectedGeneric;
+                this.props.node.options = this.optionsFormRef.current.state.options;
 
                 this.props.diagramEngine.repaintCanvas();
                 this.closeDialog();
