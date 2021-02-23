@@ -8,6 +8,7 @@ export class NodeModel extends BaseNodeModel {
 
     this.name = element.name;
     this.selectedGeneric = element.selectedGeneric;
+    this.options = element.options;
     this.addPort(new PortModel('left'));
     this.addPort(new PortModel('right'));
   }
@@ -16,12 +17,14 @@ export class NodeModel extends BaseNodeModel {
     super.deSerialize(ob, engine);
     this.name = ob.name;
     this.selectedGeneric = ob.selectedGeneric;
+    this.options = ob.options;
   }
 
   serialize() {
     return _.merge(super.serialize(), {
       name: this.name,
-      selectedGeneric: this.selectedGeneric
+      selectedGeneric: this.selectedGeneric,
+      options: this.options,
     });
   }
 }

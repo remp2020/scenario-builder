@@ -76,6 +76,7 @@ export class RenderService {
       } else if (element.type === 'generic') {
 
         element.selectedGeneric = element.generic.code;
+        element.options = element.generic.options;
         node = new Generic.NodeModel(element);
 
       } else if (element.type === 'wait') {

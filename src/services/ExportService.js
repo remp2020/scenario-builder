@@ -105,6 +105,7 @@ export class ExportService {
         type: 'generic',
         generic: {
           code: node.selectedGeneric,
+          options: node.options,
           descendants: this.getAllChildrenNodes(node).map(descendantNode =>
             this.formatDescendant(descendantNode, node)
           )

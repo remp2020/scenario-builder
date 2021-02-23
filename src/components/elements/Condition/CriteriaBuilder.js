@@ -32,7 +32,7 @@ function CriterionParam(props) {
     case 'boolean':
       return (<BooleanParam name={name} values={param.values} blueprint={props.blueprint} dispatch={dispatch}></BooleanParam>);
     case 'number':
-      return (<NumberParam name={name} values={param.values} blueprint={props.blueprint} dispatch={dispatch}></NumberParam>);
+      return (<NumberParam name={name} values={param.values} blueprint={props.blueprint} dispatch={dispatch} hideLabel={true}></NumberParam>);
     default:
       throw new Error("unsupported node type " + props.blueprint.type);
   }
