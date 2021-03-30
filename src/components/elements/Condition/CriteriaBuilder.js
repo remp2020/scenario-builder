@@ -10,6 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import StringLabeledArrayParam from '../params/StringLabeledArrayParam';
 import BooleanParam from '../params/BooleanParam';
 import NumberParam from '../params/NumberParam';
+import TimeframeParam from '../params/TimeframeParam';
 import { emptyNode, reducer, actionSetEvent, actionSetKeyForNode, actionAddCriterion, actionDeleteNode } from './criteriaReducer';
 
 const BuilderDispatch = React.createContext(null);
@@ -33,6 +34,8 @@ function CriterionParam(props) {
       return (<BooleanParam name={name} values={param.values} blueprint={props.blueprint} dispatch={dispatch}></BooleanParam>);
     case 'number':
       return (<NumberParam name={name} values={param.values} blueprint={props.blueprint} dispatch={dispatch} hideLabel={true}></NumberParam>);
+    case 'timeframe':
+      return (<TimeframeParam name={name} values={param.values} blueprint={props.blueprint} dispatch={dispatch}></TimeframeParam>);
     default:
       throw new Error("unsupported node type " + props.blueprint.type);
   }
