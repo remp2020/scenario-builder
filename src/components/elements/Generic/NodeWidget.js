@@ -13,6 +13,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { PortWidget } from "../../widgets/PortWidget";
+import StatisticsTooltip from '../../StatisticTooltip';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { setCanvasZoomingAndPanning } from "../../../actions";
 import { withStyles } from '@material-ui/core/styles';
@@ -169,6 +170,11 @@ class NodeWidget extends React.Component {
               : `Generic ${this.getSelectedGenericDefaultLabel()}`}
           </div>
         </div>
+
+        <StatisticsTooltip
+            id={this.props.node.id}
+            anchorElement={this.state.anchorElementForTooltip}
+        />
 
         <Dialog
           open={this.state.dialogOpened}
