@@ -12,7 +12,8 @@ import {
   Wait,
   Goal,
   Condition,
-  PushNotification
+  PushNotification,
+  ABTest
 } from './elements';
 
 import './sass/main.scss';
@@ -108,6 +109,12 @@ export class Application {
       new SimplePortFactory('push_notification', config => new PushNotification.PortModel())
     );
     this.diagramEngine.registerNodeFactory(new PushNotification.NodeFactory());
+
+    // AB Test
+    this.diagramEngine.registerPortFactory(
+      new SimplePortFactory('ab_test', config => new ABTest.PortModel())
+    );
+    this.diagramEngine.registerNodeFactory(new ABTest.NodeFactory());
   }
 
   getActiveDiagram() {

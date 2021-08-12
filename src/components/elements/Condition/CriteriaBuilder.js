@@ -158,7 +158,7 @@ function CriteriaTable(props) {
 
       <Grid item xs={12}>
         <Button onClick={() => dispatch(actionAddCriterion())} className={classes.button} startIcon={<AddIcon />}>
-          Add new criterion
+          Add criterion
         </Button>
       </Grid>
     </>

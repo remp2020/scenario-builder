@@ -24,12 +24,25 @@ import ConditionIcon from '@material-ui/icons/CallSplit';
 import GoalIcon from '@material-ui/icons/CheckBox';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import PushNotificationIcon from '@material-ui/icons/PhonelinkRing';
+import ABTestIcon from '@material-ui/icons/SwapVert';
 
 import * as config from './../../config';
 import { TrayItemWidget } from './TrayItemWidget';
 import { ExportService } from '../../services/ExportService';
 import Notification from '../Notification';
-import { Email, Generic, Segment, Trigger, BeforeTrigger, Wait, Goal, Banner, Condition, PushNotification } from './../elements';
+import {
+  Email,
+  Generic,
+  Segment,
+  Trigger,
+  BeforeTrigger,
+  Wait,
+  Goal,
+  Banner,
+  Condition,
+  PushNotification,
+  ABTest
+} from './../elements';
 import {
   setScenarioId,
   setScenarioName,
@@ -409,6 +422,12 @@ class BodyWidget extends React.Component {
                 name='Goal'
                 icon={<GoalIcon />}
               />
+
+              <TrayItemWidget
+                model={{ type: 'ab_test' }}
+                name='AB Test'
+                icon={<ABTestIcon />}
+              />
             </List>
           </Drawer>
           <Notification
@@ -454,6 +473,11 @@ class BodyWidget extends React.Component {
                   node = new Goal.NodeModel({
                     recheckPeriodUnit: 'hours',
                     recheckPeriodTime: 1,
+                  });
+                } else if (data.type === 'ab_test') {
+                  node = new ABTest.NodeModel({
+                    name: "AB Test",
+                    scenarioName: this.props.scenario.name
                   });
                 }
                 var points = this.props.app
