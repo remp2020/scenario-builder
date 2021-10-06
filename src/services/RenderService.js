@@ -11,7 +11,8 @@ import {
   Condition,
   BeforeTrigger,
   Generic,
-  PushNotification
+  PushNotification,
+  ABTest
 } from './../components/elements';
 import { BANNER_ENABLED } from './../config';
 
@@ -123,6 +124,15 @@ export class RenderService {
         element.selectedApplication = element.push_notification.application;
 
         node = new PushNotification.NodeModel(element);
+
+      } else if (element.type === 'ab_test') {
+
+        node = new ABTest.NodeModel({
+          'id': element.id,
+          'name': element.name,
+          'variants': element.ab_test.variants,
+          'scenarioName': this.payload.name
+        });
       }
 
       this.activeModel.addNode(node);
@@ -134,7 +144,7 @@ export class RenderService {
       let sourceNode = this.activeModel.getNode(element.id);
 
       element[element.type].descendants.forEach(item => {
-        this.linkNodes(sourceNode, this.activeModel.getNode(item.uuid), item.direction);
+        this.linkNodes(sourceNode, this.activeModel.getNode(item.uuid), item.direction, item.position);
       });
     });
 
@@ -167,10 +177,15 @@ export class RenderService {
     });
   }
 
-  linkNodes(sourceNode, targetNode, direction) {
+  linkNodes(sourceNode, targetNode, direction, position = 0) {
     if (direction){
       if (direction === 'positive') {
-        const link = sourceNode.getPort('right').link(targetNode.getPort('left'));
+        let link;
+        if (sourceNode.type === 'ab_test') {
+          link = sourceNode.getPort('right.' + position).link(targetNode.getPort('left'));
+        } else {
+          link = sourceNode.getPort('right').link(targetNode.getPort('left'));
+        }
         this.activeModel.addLink(link);
         return;
       } else if (direction === 'negative') {

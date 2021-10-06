@@ -198,13 +198,28 @@ export class ExportService {
           descendants: this.getAllChildrenNodes(node).map(descendantNode =>
             this.formatDescendant(descendantNode, node)
           )
-        },
-
+        }
+      }
+    } else if (node.type === 'ab_test') {
+      return {
+        id: node.id,
+        name: node.name ? node.name : '',
+        type: 'ab_test',
+        ab_test: {
+          variants: node.variants,
+          descendants: node.ports
+            .filter(port => port.name.startsWith('right.'))
+            .flatMap(port => this.getAllChildrenNodes(node, port.name)
+              .map(descendantNode =>
+                this.formatDescendant(descendantNode, node)
+            )
+          )
+        }
       }
     }
   }
 
-  formatDescendant = (node, parentNode) => {
+  formatDescendant = (node, parentNode, index = 0) => {
     let descendant = {
       uuid: node.id
     };
@@ -215,6 +230,9 @@ export class ExportService {
       descendant.direction = node.portName === 'right' ? 'positive' : 'negative';
     } else if (parentNode.type === 'condition') {
       descendant.direction = node.portName === 'right' ? 'positive' : 'negative';
+    } else if (parentNode.type === 'ab_test') {
+      descendant.direction = 'positive';
+      descendant.position = node.portName.split('.')[1];
     }
 
     return descendant;

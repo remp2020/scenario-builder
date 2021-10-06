@@ -26,3 +26,4 @@ export const URL_PUSH_NOTIFICATION_TEMPLATES = `${CRM_HOST}/api/v1/onesignal-tem
 export const URL_PUSH_NOTIFICATION_APPLICATIONS = `${CRM_HOST}/api/v1/onesignal-applications/list`;
 
 export const URL_SEGMENT_NEW = `${CRM_HOST}/segment/stored-segments/new`;
+export const URL_SEGMENT_SHOW = `${CRM_HOST}/segment/stored-segments/show/`;
