@@ -20,3 +20,5 @@ export const SET_SCENARIO_ID = 'set_scenario_id';
 export const SET_SCENARIO_NAME = 'set_scenario_name';
 export const SET_SCENARIO_PAYLOAD = 'set_scenario_payload';
 export const SET_SCENARIO_LOADING = 'set_scenario_loading';
+
+export const STATISTICS_CHANGED = 'statistics_changed';

@@ -19,6 +19,7 @@ import { setCanvasZoomingAndPanning } from "../../../actions";
 import { withStyles } from '@material-ui/core/styles';
 import { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import OptionsForm from "./OptionsForm";
+import StatisticBadge from "../../StatisticBadge";
 
 const styles = theme => ({
   autocomplete: {
@@ -160,6 +161,7 @@ class NodeWidget extends React.Component {
             </div>
             <div className={this.bem('__right')}>
               <PortWidget name='right' node={this.props.node} />
+              <StatisticBadge elementId={this.props.node.id} color="#a291fb" position="right" />
             </div>
           </div>
         </div>

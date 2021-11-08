@@ -1,12 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Popover from '@material-ui/core/Popover';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import axios from 'axios';
 import { connect } from 'react-redux';
-
-import * as config from '../config';
-import { setCanvasNotification } from '../actions';
 
 class StatisticsTooltip extends React.Component {
   static propTypes = {
@@ -14,51 +9,14 @@ class StatisticsTooltip extends React.Component {
     anchorElement: PropTypes.instanceOf(Element)
   };
 
-  state = {
-    html: null,
-    loading: true
-  };
-
-  componentDidUpdate(oldProps) {
-    if (
-      this.props.scenarioID &&
-      this.props.scenarioID !== oldProps.scenarioID
-    ) {
-      this.fetchStatistics();
-    }
-  }
-
-  fetchStatistics() {
-    const { dispatch, id, scenarioID, isTrigger } = this.props;
-    if (!scenarioID) return;
-
-    let url = isTrigger ? `${config.URL_TRIGGER_TOOLTIP}?trigger_uuid=${id}` : `${config.URL_ELEMENT_TOOLTIP}?element_uuid=${id}`; 
-
-    this.setState({ loading: true });
-    axios
-      .get(url)
-      .then(({ data }) => {
-        this.setState({ html: data.html });
-      })
-      .catch(error => {
-        console.log(error);
-        dispatch(
-          setCanvasNotification({
-            open: true,
-            variant: 'error',
-            text: 'Tooltip fetching failed.'
-          })
-        );
-      })
-      .then(() => {
-        this.setState({ loading: false });
-      });
-  }
-
   render() {
     const { anchorElement } = this.props;
-    const { html } = this.state;
-    if (!html) return null;
+    const data = this.props.statistics[this.props.id] ?? null;
+    const variants = this.props.variants ?? [];
+
+    if (data === null) {
+      return null;
+    }
 
     return (
       <Popover
@@ -74,26 +32,84 @@ class StatisticsTooltip extends React.Component {
           horizontal: 'center'
         }}
       >
-        {this.state.loading && (
-          <div className='node-tooltip-loader'>
-            <CircularProgress size={30} />
-          </div>
-        )}
+        <div className='node-tooltip-wrapper'>
+          {data ?
+            <div className="scenario-tooltip" style={{padding: '10px'}}>
+              <strong style={{color: 'red'}}>Statistics</strong>
+              <hr/>
 
-        <div
-          className='node-tooltip-wrapper'
-          dangerouslySetInnerHTML={{ __html: this.state.html }}
-        />
+              <strong>Last 24 hours</strong><br/>
+              <table>
+                <tbody>
+                {data.hasOwnProperty('finished') ?
+                  <tr>
+                    <td>Finished:</td>
+                    <td>{data.finished["24h"]}</td>
+                  </tr> : null}
+                {data.hasOwnProperty('matched') ?<tr>
+                  <td>Matched:</td>
+                  <td>{data.matched["24h"]}</td>
+                </tr> : null}
+                {data.hasOwnProperty('notMatched') ? <tr>
+                    <td>Not matched:</td>
+                    <td>{data.notMatched["24h"]}</td>
+                  </tr> : null}
+                {data.hasOwnProperty('waiting') ? <tr>
+                    <td>Waiting:</td>
+                    <td>{data.waiting["24h"]}</td>
+                  </tr> : null}
+                {variants.flatMap((variant) => (
+                  <tr key={variant.code}>
+                    <td>{variant.name}:</td>
+                    <td>{data[variant.code] ? data[variant.code]["24h"] : 0}</td>
+                  </tr>
+                ))}
+                </tbody>
+              </table>
+
+              <strong>Last 30 days</strong><br/>
+
+              <table>
+                <tbody>
+                  {data.hasOwnProperty('finished') ?
+                    <tr>
+                      <td>Finished:</td>
+                      <td>{data.finished["30d"]}</td>
+                    </tr> : null}
+                  {data.hasOwnProperty('matched') ?
+                    <tr>
+                      <td>Matched:</td>
+                      <td>{data.matched["30d"]}</td>
+                    </tr> : null}
+                  {data.hasOwnProperty('notMatched') ?
+                    <tr>
+                      <td>Not matched:</td>
+                      <td>{data.notMatched["30d"]}</td>
+                    </tr> : null}
+                  {data.hasOwnProperty('waiting') ?
+                    <tr>
+                      <td>Waiting:</td>
+                      <td>{data.waiting["30d"]}</td>
+                    </tr> : null}
+                  {variants.flatMap((variant) => (
+                    <tr key={variant.code}>
+                      <td>{variant.name}:</td>
+                      <td>{data[variant.code] ? data[variant.code]["30d"] : 0}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            : ''}
+        </div>
       </Popover>
     );
   }
 }
 
 function mapStateToProps(state) {
-  const { scenario } = state;
-
   return {
-    scenarioID: scenario.id
+    statistics: state.statistics.statistics
   };
 }
 

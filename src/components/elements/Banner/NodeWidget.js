@@ -18,6 +18,7 @@ import { PortWidget } from '../../widgets/PortWidget';
 import StatisticsTooltip from '../../StatisticTooltip';
 import MaterialSelect from '../../MaterialSelect';
 import { setCanvasZoomingAndPanning } from '../../../actions';
+import StatisticBadge from "../../StatisticBadge";
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -123,6 +124,7 @@ class NodeWidget extends React.Component {
             </div>
             <div className={this.bem('__right')}>
               <PortWidget name='right' node={this.props.node} />
+              <StatisticBadge elementId={this.props.node.id} color="#6435c9" position="right" />
             </div>
           </div>
         </div>

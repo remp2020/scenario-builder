@@ -17,6 +17,7 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import StatisticBadge from "../../StatisticBadge";
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -109,6 +110,7 @@ class NodeWidget extends React.Component {
           <div className={this.bem('__ports')}>
             <div className={this.bem('__right')}>
               <PortWidget name='right' node={this.props.node} />
+              <StatisticBadge elementId={this.props.node.id} color="#00b5ad" position="right" />
             </div>
           </div>
         </div>

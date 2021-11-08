@@ -15,7 +15,8 @@ import {
   setScenarioName,
   fetchMails,
   fetchGenerics,
-  fetchPushNotifications
+  fetchPushNotifications,
+  fetchStatistics
 } from './actions';
 
 class App extends Component {
@@ -40,6 +41,7 @@ class App extends Component {
 
     if (config.SCENARIO_ID) {
       dispatch(fetchScenario(config.SCENARIO_ID));
+      dispatch(fetchStatistics(config.SCENARIO_ID));
     } else {
       dispatch(setScenarioName('Unnamed scenario'));
     }
