@@ -225,6 +225,7 @@ class BodyWidget extends React.Component {
             text: errorMessage
           })
         );
+        console.log(error);
       });
   };
 
