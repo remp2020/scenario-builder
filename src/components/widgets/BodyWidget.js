@@ -212,14 +212,19 @@ class BodyWidget extends React.Component {
       })
       .catch(error => {
         dispatch(setScenarioLoading(false));
+
+        let errorMessage = 'Scenario saving failed.';
+        if (error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+
         dispatch(
           setCanvasNotification({
             open: true,
             variant: 'error',
-            text: 'Scenario saving failed.'
+            text: errorMessage
           })
         );
-        console.log(error);
       });
   };
 
