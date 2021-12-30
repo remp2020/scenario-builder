@@ -10,6 +10,7 @@ import GenericsReducer from './GenericsReducer';
 import GoalsReducer from './GoalsReducer';
 import BannersReducer from './BannersReducer';
 import PushNotificationsReducer from './PushNotificationsReducer';
+import StatisticsReducer from "./StatisticsReducer";
 
 export default combineReducers({
   segments: SegmentsReducer,
@@ -23,4 +24,5 @@ export default combineReducers({
   goals: GoalsReducer,
   banners: BannersReducer,
   pushNotifications: PushNotificationsReducer,
+  statistics: StatisticsReducer,
 });

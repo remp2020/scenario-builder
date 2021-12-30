@@ -29,9 +29,10 @@ $nodeColor: $grey;
   }
 
   &__description {
+    display: flex;
     position: absolute;
-    left: 20px;
-    top: -3px;
+    left: 40px;
+    top: -2px;
     font-size: 0.8rem;
     color: $black;
   }

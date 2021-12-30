@@ -11,8 +11,9 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { PortWidget } from './../../widgets/PortWidget';
-import StatisticsTooltip from '../../StatisticTooltip';
 import { setCanvasZoomingAndPanning } from '../../../actions';
+import StatisticBadge from "../../StatisticBadge";
+import StatisticsTooltip from "../../StatisticTooltip";
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -84,16 +85,14 @@ class NodeWidget extends React.Component {
 
   render() {
     return (
-      <div
-        className={this.getClassName()}
+      <div className={this.getClassName()}
         style={{ background: this.props.node.color }}
-        onDoubleClick={() => {
-          this.openDialog();
-        }}
-        onMouseEnter={this.handleNodeMouseEnter}
-        onMouseLeave={this.handleNodeMouseLeave}
       >
-        <div className='node-container'>
+        <div className='node-container'
+           onDoubleClick={() => {this.openDialog();}}
+           onMouseEnter={this.handleNodeMouseEnter}
+           onMouseLeave={this.handleNodeMouseLeave}
+        >
           <div className={this.bem('__icon')}>
             <TriggerIcon />
           </div>
@@ -101,6 +100,7 @@ class NodeWidget extends React.Component {
           <div className={this.bem('__ports')}>
             <div className={this.bem('__right')}>
               <PortWidget name='right' node={this.props.node} />
+              <StatisticBadge elementId={this.props.node.id} color="#21ba45" position="right" />
             </div>
           </div>
         </div>

@@ -11,11 +11,11 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import groupBy from 'lodash/groupBy';
 import { styled } from '@material-ui/core/styles';
-
 import { PortWidget } from '../../widgets/PortWidget';
-import StatisticsTooltip from '../../StatisticTooltip';
 import MaterialSelect from '../../MaterialSelect';
 import { setCanvasZoomingAndPanning } from '../../../actions';
+import StatisticBadge from "../../StatisticBadge";
+import StatisticsTooltip from "../../StatisticTooltip";
 
 const PreviewEmailButton = styled(Button)({
   marginRight: 'auto'
@@ -141,6 +141,7 @@ class NodeWidget extends React.Component {
             </div>
             <div className={this.bem('__right')}>
               <PortWidget name='right' node={this.props.node} />
+              <StatisticBadge elementId={this.props.node.id} color="#a291fb" position="right" />
             </div>
           </div>
         </div>

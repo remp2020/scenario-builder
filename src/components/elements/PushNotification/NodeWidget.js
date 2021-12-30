@@ -13,6 +13,7 @@ import { PortWidget } from '../../widgets/PortWidget';
 import StatisticsTooltip from '../../StatisticTooltip';
 import { setCanvasZoomingAndPanning } from '../../../actions';
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import StatisticBadge from "../../StatisticBadge";
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -113,6 +114,7 @@ class NodeWidget extends React.Component {
             </div>
             <div className={this.bem('__right')}>
               <PortWidget name='right' node={this.props.node} />
+              <StatisticBadge elementId={this.props.node.id} color="#dc73ff" position="right" />
             </div>
           </div>
         </div>
@@ -174,7 +176,6 @@ class NodeWidget extends React.Component {
                   getOptionLabel={(option) => option.label}
                   style={{ marginBottom: 16 }}
                   onChange={(event, selectedOption) => {
-                    console.log(this.state);
                     if (selectedOption !== null) {
                       this.setState({
                         selectedTemplate: selectedOption.value

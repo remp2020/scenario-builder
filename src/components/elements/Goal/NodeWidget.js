@@ -20,6 +20,7 @@ import StatisticsTooltip from '../../StatisticTooltip';
 import { PortWidget } from './../../widgets/PortWidget';
 import MaterialSelect from '../../MaterialSelect';
 import { setCanvasZoomingAndPanning } from '../../../actions';
+import StatisticBadge from "../../StatisticBadge";
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -135,29 +136,19 @@ class NodeWidget extends React.Component {
             </div>
 
             <div className={this.bem('__right')}>
-              <PortWidget name='right' node={this.props.node}>
-                <OkIcon
-                  style={{
-                    position: 'absolute',
-                    top: '-20px',
-                    right: '-20px',
-                    color: '#2ECC40'
-                  }}
-                />
-              </PortWidget>
+              <PortWidget name='right' node={this.props.node} />
+                {this.props.statistics[this.props.node.id] ?
+                  <StatisticBadge elementId={this.props.node.id} color="#21ba45" position="right" /> :
+                  <OkIcon style={{position: 'absolute', top: '-5px', right: '-30px', color: '#2ECC40'}} />
+                }
             </div>
 
             <div className={this.bem('__bottom')}>
-              <PortWidget name='bottom' node={this.props.node}>
-                <TimeoutIcon
-                  style={{
-                    position: 'absolute',
-                    top: '8px',
-                    right: '-22px',
-                    color: '#FF695E'
-                  }}
-                />
-              </PortWidget>
+              <PortWidget name='bottom' node={this.props.node} />
+              {this.props.statistics[this.props.node.id] ?
+                <StatisticBadge elementId={this.props.node.id} color="#db2828" position="bottom" /> :
+                <TimeoutIcon style={{position: 'absolute', top: '15px', right: '-5px', color: '#FF695E'}} />
+              }
             </div>
           </div>
         </div>
@@ -342,7 +333,8 @@ function mapStateToProps(state) {
 
   return {
     goals: goals.availableGoals,
-    dispatch
+    dispatch,
+    statistics: state.statistics.statistics
   };
 }
 

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import SegmentIcon from '@material-ui/icons/SubdirectoryArrowRight';
-import OkIcon from '@material-ui/icons/Check';
-import NopeIcon from '@material-ui/icons/Close';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -12,12 +10,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Icon from '@material-ui/core/Icon';
-import StatisticsTooltip from '../../StatisticTooltip';
 import { PortWidget } from '../../widgets/PortWidget';
 import { setCanvasZoomingAndPanning } from '../../../actions';
 import SegmentSelector from './SegmentSelector';
 import * as config from '../../../config';
 import { styled } from '@material-ui/core/styles';
+import StatisticBadge from "../../StatisticBadge";
+import StatisticsTooltip from "../../StatisticTooltip";
+import OkIcon from "@material-ui/icons/Check";
+import NopeIcon from "@material-ui/icons/Close";
 
 const NewSegmentButton = styled(Button)({
   marginRight: 'auto'
@@ -134,29 +135,19 @@ class NodeWidget extends React.Component {
             </div>
 
             <div className={this.bem('__right')}>
-              <PortWidget name='right' node={this.props.node}>
-                <OkIcon
-                  style={{
-                    position: 'absolute',
-                    top: '-20px',
-                    right: '-20px',
-                    color: '#2ECC40'
-                  }}
-                />
-              </PortWidget>
+              <PortWidget name='right' node={this.props.node} />
+              {this.props.statistics[this.props.node.id] ?
+                <StatisticBadge elementId={this.props.node.id} color="#21ba45" position="right" /> :
+                <OkIcon style={{position: 'absolute', top: '-5px', right: '-30px', color: '#2ECC40'}} />
+              }
             </div>
 
             <div className={this.bem('__bottom')}>
-              <PortWidget name='bottom' node={this.props.node}>
-                <NopeIcon
-                  style={{
-                    position: 'absolute',
-                    top: '8px',
-                    right: '-22px',
-                    color: '#FF695E'
-                  }}
-                />
-              </PortWidget>
+              <PortWidget name='bottom' node={this.props.node} />
+              {this.props.statistics[this.props.node.id] ?
+                <StatisticBadge elementId={this.props.node.id} color="#db2828" position="bottom" /> :
+                <NopeIcon style={{position: 'absolute', top: '15px', right: '-5px', color: '#FF695E'}} />
+              }
             </div>
           </div>
         </div>
@@ -265,6 +256,7 @@ function mapStateToProps(state) {
 
   return {
     segments: segments.avalaibleSegments,
+    statistics: state.statistics.statistics,
     dispatch
   };
 }

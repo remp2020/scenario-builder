@@ -13,10 +13,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
-import { PortWidget } from './../../widgets/PortWidget';
-import StatisticsTooltip from '../../StatisticTooltip';
+import { PortWidget } from '../../widgets/PortWidget';
 import { setCanvasZoomingAndPanning } from '../../../actions';
+import StatisticBadge from "../../StatisticBadge";
+import StatisticsTooltip from "../../StatisticTooltip";
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -92,6 +92,7 @@ class NodeWidget extends React.Component {
             </div>
             <div className={this.bem('__right')}>
               <PortWidget name='right' node={this.props.node} />
+              <StatisticBadge elementId={this.props.node.id} color="#ff851b" position="right" />
             </div>
           </div>
         </div>
