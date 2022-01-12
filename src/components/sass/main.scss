@@ -134,6 +134,12 @@
   padding: 20px;
 }
 
+.statistic-badge-container-bottom {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .statistic-badge-right {
   position: absolute;
   top: 15px;
@@ -143,5 +149,4 @@
 .statistic-badge-bottom {
   position: absolute;
   top: 25px;
-  left: 5px;
 }

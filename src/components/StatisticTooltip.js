@@ -38,6 +38,18 @@ class StatisticsTooltip extends React.Component {
               <strong style={{color: 'red'}}>Statistics</strong>
               <hr/>
 
+              {data.hasOwnProperty('waiting') ?
+                <div style={{marginBottom: '10px'}}>
+                  Waiting: {data.waiting}
+                </div> : null
+              }
+
+              {data.hasOwnProperty('recheck') ?
+                <div style={{marginBottom: '10px'}}>
+                  Waiting to re-check: {data.recheck}
+                </div> : null
+              }
+
               <strong>Last 24 hours</strong><br/>
               <table>
                 <tbody>
@@ -46,17 +58,25 @@ class StatisticsTooltip extends React.Component {
                     <td>Finished:</td>
                     <td>{data.finished["24h"]}</td>
                   </tr> : null}
-                {data.hasOwnProperty('matched') ?<tr>
-                  <td>Matched:</td>
-                  <td>{data.matched["24h"]}</td>
-                </tr> : null}
-                {data.hasOwnProperty('notMatched') ? <tr>
+                {data.hasOwnProperty('matched') ?
+                  <tr>
+                    <td>Matched:</td>
+                    <td>{data.matched["24h"]}</td>
+                  </tr> : null}
+                {data.hasOwnProperty('notMatched') ?
+                  <tr>
                     <td>Not matched:</td>
                     <td>{data.notMatched["24h"]}</td>
                   </tr> : null}
-                {data.hasOwnProperty('waiting') ? <tr>
-                    <td>Waiting:</td>
-                    <td>{data.waiting["24h"]}</td>
+                {data.hasOwnProperty('completed') ?
+                  <tr>
+                    <td>Completed:</td>
+                    <td>{data.completed["24h"]}</td>
+                  </tr> : null}
+                {data.hasOwnProperty('timeout') ?
+                  <tr>
+                    <td>Timed out:</td>
+                    <td>{data.timeout["24h"]}</td>
                   </tr> : null}
                 {variants.flatMap((variant) => (
                   <tr key={variant.code}>
@@ -71,32 +91,37 @@ class StatisticsTooltip extends React.Component {
 
               <table>
                 <tbody>
-                  {data.hasOwnProperty('finished') ?
-                    <tr>
-                      <td>Finished:</td>
-                      <td>{data.finished["30d"]}</td>
-                    </tr> : null}
-                  {data.hasOwnProperty('matched') ?
-                    <tr>
-                      <td>Matched:</td>
-                      <td>{data.matched["30d"]}</td>
-                    </tr> : null}
-                  {data.hasOwnProperty('notMatched') ?
-                    <tr>
-                      <td>Not matched:</td>
-                      <td>{data.notMatched["30d"]}</td>
-                    </tr> : null}
-                  {data.hasOwnProperty('waiting') ?
-                    <tr>
-                      <td>Waiting:</td>
-                      <td>{data.waiting["30d"]}</td>
-                    </tr> : null}
-                  {variants.flatMap((variant) => (
-                    <tr key={variant.code}>
-                      <td>{variant.name}:</td>
-                      <td>{data[variant.code] ? data[variant.code]["30d"] : 0}</td>
-                    </tr>
-                  ))}
+                {data.hasOwnProperty('finished') ?
+                  <tr>
+                    <td>Finished:</td>
+                    <td>{data.finished["30d"]}</td>
+                  </tr> : null}
+                {data.hasOwnProperty('matched') ?
+                  <tr>
+                    <td>Matched:</td>
+                    <td>{data.matched["30d"]}</td>
+                  </tr> : null}
+                {data.hasOwnProperty('notMatched') ?
+                  <tr>
+                    <td>Not matched:</td>
+                    <td>{data.notMatched["30d"]}</td>
+                  </tr> : null}
+                {data.hasOwnProperty('completed') ?
+                  <tr>
+                    <td>Completed:</td>
+                    <td>{data.completed["30d"]}</td>
+                  </tr> : null}
+                {data.hasOwnProperty('timeout') ?
+                  <tr>
+                    <td>Timed out:</td>
+                    <td>{data.timeout["30d"]}</td>
+                  </tr> : null}
+                {variants.flatMap((variant) => (
+                  <tr key={variant.code}>
+                    <td>{variant.name}:</td>
+                    <td>{data[variant.code] ? data[variant.code]["30d"] : 0}</td>
+                  </tr>
+                ))}
                 </tbody>
               </table>
             </div>

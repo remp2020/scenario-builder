@@ -32,8 +32,16 @@ function StatisticBadge(props) {
     label = data.matched[defaultTimePeriod];
   }
 
+  if (props.position === 'right' && data.hasOwnProperty('completed')) {
+    label = data.completed[defaultTimePeriod];
+  }
+
   if (props.position === 'bottom' && data.hasOwnProperty('notMatched')) {
     label = data.notMatched[defaultTimePeriod];
+  }
+
+  if (props.position === 'bottom' && data.hasOwnProperty('timeout')) {
+    label = data.timeout[defaultTimePeriod];
   }
 
   if (props.hasOwnProperty('index')) {
@@ -49,6 +57,7 @@ function StatisticBadge(props) {
   }
 
   return (
+    <div className={"statistic-badge-container-" + props.position}>
       <Chip
         label={formatLabelNumbers(label)}
         color="primary"
@@ -56,6 +65,7 @@ function StatisticBadge(props) {
         style={{backgroundColor: props.color, height: '16px', borderRadius: '4px', fontSize: '0.7rem'}}
         className={"statistic-badge statistic-badge-" + props.position}
       />
+    </div>
   );
 }
 
