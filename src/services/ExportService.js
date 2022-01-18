@@ -38,10 +38,13 @@ export class ExportService {
     });
 
     Object.entries(this.model.getNodes()).forEach(node => {
+
       if (!triggers.includes(node[1].type)) {
         payload.elements[node[0]] = this.formatNode(node[1].serialize());
       }
     });
+
+    console.log('payload.elements', payload.elements);
 
     return payload;
   }
@@ -49,7 +52,12 @@ export class ExportService {
   getAllChildrenNodes(node, portName = 'right') {
     const port = node.ports.find(port => port.name === portName);
 
-    return port.links.map(link => {
+    if (portName === 'right.0') {
+      console.log(node, portName);
+      console.log(port.links);
+    }
+
+    let childrenNodes =  port.links.map(link => {
       let nextNode = null;
 
       if (this.model.links[link].targetPort.parent.id !== node.id) {
@@ -60,6 +68,12 @@ export class ExportService {
 
       return { ...nextNode.serialize(), portName };
     });
+
+    if (portName === 'right.0') {
+      console.log(childrenNodes);
+    }
+
+    return childrenNodes;
   }
 
   getPositiveAndNegativeDescendants(node) {
@@ -201,19 +215,22 @@ export class ExportService {
         }
       }
     } else if (node.type === 'ab_test') {
+      let descendants = node.ports
+        .filter(port => port.name.startsWith('right.'))
+        .flatMap(port => this.getAllChildrenNodes(node, port.name)
+          .map(descendantNode => this.formatDescendant(descendantNode, node)
+          )
+        );
+
+      console.log(descendants);
+
       return {
         id: node.id,
         name: node.name ? node.name : '',
         type: 'ab_test',
         ab_test: {
           variants: node.variants,
-          descendants: node.ports
-            .filter(port => port.name.startsWith('right.'))
-            .flatMap(port => this.getAllChildrenNodes(node, port.name)
-              .map(descendantNode =>
-                this.formatDescendant(descendantNode, node)
-            )
-          )
+          descendants: descendants
         }
       }
     }

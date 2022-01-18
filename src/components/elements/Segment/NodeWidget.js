@@ -107,6 +107,11 @@ class NodeWidget extends React.Component {
   };
 
   render() {
+    let displayStatisticBadge = false;
+    if (this.props.statistics.length === 0 || this.props.statistics[this.props.node.id]) {
+      displayStatisticBadge = true;
+    }
+
     return (
       <div
         className={this.getClassName()}
@@ -136,7 +141,7 @@ class NodeWidget extends React.Component {
 
             <div className={this.bem('__right')}>
               <PortWidget name='right' node={this.props.node} />
-              {this.props.statistics[this.props.node.id] ?
+              {displayStatisticBadge ?
                 <StatisticBadge elementId={this.props.node.id} color="#21ba45" position="right" /> :
                 <OkIcon style={{position: 'absolute', top: '-5px', right: '-30px', color: '#2ECC40'}} />
               }
@@ -144,7 +149,7 @@ class NodeWidget extends React.Component {
 
             <div className={this.bem('__bottom')}>
               <PortWidget name='bottom' node={this.props.node} />
-              {this.props.statistics[this.props.node.id] ?
+              {displayStatisticBadge ?
                 <StatisticBadge elementId={this.props.node.id} color="#db2828" position="bottom" /> :
                 <NopeIcon style={{position: 'absolute', top: '15px', right: '-5px', color: '#FF695E'}} />
               }
