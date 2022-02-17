@@ -59,6 +59,11 @@
   }
 }
 
+.diagram-layer {
+  position: relative;
+  top: 64px;
+}
+
 .body {
   flex-grow: 1;
   display: flex;
