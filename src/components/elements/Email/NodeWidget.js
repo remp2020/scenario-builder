@@ -9,16 +9,27 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import groupBy from 'lodash/groupBy';
-import { styled } from '@material-ui/core/styles';
+import {styled} from '@material-ui/core/styles';
 import { PortWidget } from '../../widgets/PortWidget';
-import MaterialSelect from '../../MaterialSelect';
 import { setCanvasZoomingAndPanning } from '../../../actions';
 import StatisticBadge from "../../StatisticBadge";
 import StatisticsTooltip from "../../StatisticTooltip";
+import {Autocomplete} from "@material-ui/lab";
+import {withStyles} from "@material-ui/core";
+import {createFilterOptions} from "@material-ui/lab/Autocomplete";
 
 const PreviewEmailButton = styled(Button)({
   marginRight: 'auto'
+});
+
+const styles = theme => ({
+  autocomplete: {
+    margin: theme.spacing(1)
+  },
+  subtitle: {
+    paddingLeft: '6px',
+    color: theme.palette.grey[600]
+  },
 });
 
 class NodeWidget extends React.Component {
@@ -51,6 +62,7 @@ class NodeWidget extends React.Component {
     this.setState({
       dialogOpened: true,
       nodeFormName: this.props.node.name,
+      selectedMail: this.props.node.selectedMail,
       anchorElementForTooltip: null
     });
     this.props.dispatch(setCanvasZoomingAndPanning(false));
@@ -71,44 +83,12 @@ class NodeWidget extends React.Component {
     this.setState({ anchorElementForTooltip: null });
   };
 
-  getFormatedValue = () => {
-    const match = this.props.mails.find(mail => {
-      return mail.code === this.state.selectedMail;
-    });
-
-    return match
-      ? {
-          value: match.code,
-          label: match.name
-        }
-      : {};
-  };
-
-  // maybe refactor to more effective way if is a problem
-  transformOptionsForSelect = () => {
-    const lodashGrouped = groupBy(
-      this.props.mails,
-      mail => mail.mail_type.code
+  getSelectedMail = () => {
+    const selected = this.props.mails.find(
+      mail => mail.code === this.state.selectedMail
     );
 
-    const properlyGrouped = [];
-
-    Object.keys(lodashGrouped).forEach(key => {
-      properlyGrouped.push({
-        label: lodashGrouped[key][0].mail_type.name,
-        sorting: lodashGrouped[key][0].mail_type.sorting,
-        options: lodashGrouped[key].map(mail => ({
-          value: mail.code,
-          label: mail.name
-        }))
-      });
-    });
-
-    const properlyGroupedSorted = properlyGrouped.sort((a, b) => {
-      return a.sorting - b.sorting;
-    });
-
-    return properlyGroupedSorted;
+    return selected ? selected : null;
   };
 
   getSelectedMailValue = () => {
@@ -119,7 +99,19 @@ class NodeWidget extends React.Component {
     return selected ? ` - ${selected.name}` : '';
   };
 
+  filterOptions = () => createFilterOptions({
+    matchFrom: 'any',
+    trim: true,
+    ignoreAccents: true,
+    ignoreCase: true,
+    stringify: option => {
+      return option.name + " " + option.code;
+    },
+  });
+
   render() {
+    const {classes} = this.props;
+
     return (
       <div
         className={this.getClassName()}
@@ -195,16 +187,29 @@ class NodeWidget extends React.Component {
 
             <Grid container alignItems='center' alignContent='space-between'>
               <Grid item xs={12}>
-                <MaterialSelect
-                  options={this.transformOptionsForSelect()}
-                  value={this.getFormatedValue()}
-                  onChange={event => {
-                    this.setState({
-                      selectedMail: event.value,
-                    });
+                <Autocomplete
+                  value={this.getSelectedMail()}
+                  options={this.props.mails}
+                  getOptionLabel={(option) => option.name}
+                  disableClearable={true}
+                  filterOptions={this.filterOptions()}
+                  groupBy={(option) => option.mail_type.code}
+                  onChange={(event, selectedOption) => {
+                    if (selectedOption !== null) {
+                      this.setState({
+                        selectedMail: selectedOption.code
+                      })
+                    }
                   }}
-                  placeholder='Pick one'
-                  label='Selected Mail'
+                  renderInput={params => (
+                    <TextField {...params} variant="standard" label="Selected Mail" fullWidth />
+                  )}
+                  renderOption={(option, { selected }) => (
+                    <div>
+                      <span className={classes.title}>{option.name}</span>
+                      <small className={classes.subtitle}>({option.code})</small>
+                    </div>
+                  )}
                 />
               </Grid>
             </Grid>
@@ -253,4 +258,6 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(NodeWidget);
+export default connect(mapStateToProps)(
+  withStyles(styles)(NodeWidget)
+);

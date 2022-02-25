@@ -18,9 +18,9 @@ import GoalIcon from '@material-ui/icons/CheckBox';
 
 import StatisticsTooltip from '../../StatisticTooltip';
 import { PortWidget } from './../../widgets/PortWidget';
-import MaterialSelect from '../../MaterialSelect';
 import { setCanvasZoomingAndPanning } from '../../../actions';
 import StatisticBadge from "../../StatisticBadge";
+import {Autocomplete} from "@material-ui/lab";
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -33,7 +33,7 @@ class NodeWidget extends React.Component {
       recheckPeriodTime: this.props.node.recheckPeriodTime,
       recheckPeriodUnit: this.props.node.recheckPeriodUnit,
       dialogOpened: false,
-      anchorElementForTooltip: null,      
+      anchorElementForTooltip: null,
     };
   }
 
@@ -89,24 +89,14 @@ class NodeWidget extends React.Component {
     this.setState({ anchorElementForTooltip: null });
   };
 
-  getFormatedValue = () => {
-    let goals = {};
-    this.props.goals.forEach(goal => {
-      goals[goal.code] = goal;
-    });
-
-    let matches = [];
-
-    if (this.state.selectedGoals !== undefined) {
-      this.state.selectedGoals.forEach(goalCode => {
-        matches.push({
-          value: goalCode,
-          label: goals[goalCode].name 
-        });
-      });
+  getSelectedGoals = () => {
+    if (this.state.selectedGoals === undefined) {
+      return [];
     }
 
-    return matches;
+    return this.props.goals.filter((item) => {
+      return this.state.selectedGoals.includes(item.code)
+    }, this.state.selectedGoals);
   };
 
   render() {
@@ -169,14 +159,12 @@ class NodeWidget extends React.Component {
               return false;
             }
           }}
-          // fullScreen={this.state.creatingNewSegment}
-          // disableEscapeKeyDown={this.state.creatingNewSegment}
-        >            
+        >
           <DialogTitle id='form-dialog-title'>Goal node</DialogTitle>
 
           <DialogContent>
             <DialogContentText>
-              Goal node evaluates whether user has completed selected onboarding goals. 
+              Goal node evaluates whether user has completed selected onboarding goals.
               Timeout value can be optionally specified, defining a point in time when evalution of completed goals is stopped.
               Execution flow can be directed two ways from the node - a positive direction, when all goals are completed, or a negative one, when timeout threshold is reached.
             </DialogContentText>
@@ -198,24 +186,29 @@ class NodeWidget extends React.Component {
               </Grid>
             </Grid>
 
-            <Grid container>
+            <Grid container style={{marginBottom: '10px'}}>
               <Grid item xs={12}>
-                <MaterialSelect
-                  options={this.transformOptionsForSelect()}
-                  value={this.getFormatedValue()}
-                  onChange={selectedGoals => {
-                    this.setState({
-                      selectedGoals: selectedGoals.map(item => item.value)
-                    });
+                <Autocomplete
+                  multiple
+                  value={this.getSelectedGoals()}
+                  options={this.props.goals}
+                  getOptionLabel={(option) => option.name}
+                  disableClearable={true}
+                  onChange={(event, values) => {
+                    if (values !== null) {
+                      this.setState({
+                        selectedGoals: values.map(item => item.code)
+                      });
+                    }
                   }}
-                  isMulti={true}
-                  placeholder='Pick goals'
-                  label='Selected Goal(s)'
+                  renderInput={params => (
+                    <TextField {...params} variant="standard" label="Selected Goal(s)" fullWidth />
+                  )}
                 />
               </Grid>
             </Grid>
 
-            <Grid container>
+            <Grid container spacing={1}>
               <Grid item xs={6}>
                 <TextField
                   id='recheck-period-time'
@@ -253,8 +246,8 @@ class NodeWidget extends React.Component {
                 </FormControl>
               </Grid>
             </Grid>
-            
-            <Grid container>
+
+            <Grid container spacing={1}>
               <Grid item xs={6}>
                 <TextField
                   id='timeout-time'
