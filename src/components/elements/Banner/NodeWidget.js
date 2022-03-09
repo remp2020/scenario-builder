@@ -16,9 +16,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import { PortWidget } from '../../widgets/PortWidget';
 import StatisticsTooltip from '../../StatisticTooltip';
-import MaterialSelect from '../../MaterialSelect';
 import { setCanvasZoomingAndPanning } from '../../../actions';
 import StatisticBadge from "../../StatisticBadge";
+import {Autocomplete} from "@material-ui/lab";
 
 class NodeWidget extends React.Component {
   constructor(props) {
@@ -72,29 +72,15 @@ class NodeWidget extends React.Component {
     this.setState({ anchorElementForTooltip: null });
   };
 
-  getFormatedValue = () => {
-    const match = this.props.banners.find(banner => {
-      return banner.id === this.state.selectedBanner;
-    });
+  getSelectedBanner = () => {
+    const selected = this.props.banners.find(
+      banner => banner.id === this.state.selectedBanner
+    );
 
-    return match
-      ? {
-          value: match.id,
-          label: match.name
-        }
-      : {};
+    return selected ? selected : null;
   };
 
-  // maybe refactor to more effective way if is a problem
-  transformOptionsForSelect = () => {
-    const banners = this.props.banners.map(banner => ({
-      value: banner.id,
-      label: banner.name,
-    }));
-    return banners;
-  };
-
-  getSelectedMailValue = () => {
+  getSelectedBannerValue = () => {
     const selected = this.props.banners.find(
       banner => banner.id === this.props.node.selectedBanner
     );
@@ -132,7 +118,7 @@ class NodeWidget extends React.Component {
           <div className={this.bem('__name')}>
             {this.props.node.name
               ? this.props.node.name
-              : `Banner ${this.getSelectedMailValue()}`}
+              : `Banner ${this.getSelectedBannerValue()}`}
           </div>
         </div>
 
@@ -176,23 +162,28 @@ class NodeWidget extends React.Component {
               </Grid>
             </Grid>
 
-            <Grid container>
+            <Grid container style={{marginBottom: '10px'}}>
               <Grid item xs={12}>
-                <MaterialSelect
-                  options={this.transformOptionsForSelect()}
-                  value={this.getFormatedValue()}
-                  onChange={event => {
-                    this.setState({
-                      selectedBanner: event.value
-                    });
+                <Autocomplete
+                  value={this.getSelectedBanner()}
+                  options={this.props.banners}
+                  getOptionLabel={(option) => option.name}
+                  disableClearable={true}
+                  onChange={(event, selectedOption) => {
+                    if (selectedOption !== null) {
+                      this.setState({
+                        selectedBanner: selectedOption.id
+                      });
+                    }
                   }}
-                  placeholder='Pick one'
-                  label='Selected Banner'
+                  renderInput={params => (
+                    <TextField {...params} variant="standard" label="Selected Banner" fullWidth />
+                  )}
                 />
               </Grid>
             </Grid>
 
-            <Grid container>
+            <Grid container spacing={1}>
               <Grid item xs={6}>
                 <TextField
                   id='expires-in-time'
