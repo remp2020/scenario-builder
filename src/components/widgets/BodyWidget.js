@@ -49,6 +49,8 @@ import {
   setCanvasNotification,
   setScenarioLoading
 } from '../../actions';
+import {ZoomIn, ZoomOut, ZoomOutMap} from "@material-ui/icons";
+import {Divider} from "@material-ui/core";
 
 const drawerWidth = 240;
 
@@ -274,6 +276,22 @@ class BodyWidget extends React.Component {
     this.props.dispatch(setCanvasNotification({ open: false }));
   };
 
+  zoomOut = () => {
+    let zoomLevel = this.props.app.diagramEngine.getDiagramModel().getZoomLevel();
+    this.props.app.diagramEngine.getDiagramModel().setZoomLevel(zoomLevel - 5);
+    this.props.app.diagramEngine.repaintCanvas();
+  };
+
+  zoomIn = () => {
+    let zoomLevel = this.props.app.diagramEngine.getDiagramModel().getZoomLevel();
+    this.props.app.diagramEngine.getDiagramModel().setZoomLevel(zoomLevel + 5);
+    this.props.app.diagramEngine.repaintCanvas();
+  };
+
+  zoomToFit = () => {
+    this.props.app.diagramEngine.zoomToFit();
+  };
+
   render() {
     const { classes, canvas } = this.props;
 
@@ -325,6 +343,34 @@ class BodyWidget extends React.Component {
                         color='inherit'
                       />
                     )}
+                      <Button
+                        title="Zoom in"
+                        size='small'
+                        variant='contained'
+                        color='primary'
+                        onClick={() => this.zoomIn()}
+                      >
+                        <ZoomIn />
+                      </Button>
+                      <Button
+                        title="Zoom out"
+                        size='small'
+                        variant='contained'
+                        color='primary'
+                        onClick={() => this.zoomOut()}
+                      >
+                        <ZoomOut titleAccess="Test" />
+                      </Button>
+                      <Button
+                        title="Zoom to fit"
+                        size='small'
+                        variant='contained'
+                        color='primary'
+                        onClick={() => this.zoomToFit()}
+                      >
+                        <ZoomOutMap />
+                      </Button>
+                    <Divider orientation="vertical" variant="middle" flexItem />
                     <Button
                       size='small'
                       variant='contained'
@@ -452,7 +498,7 @@ class BodyWidget extends React.Component {
                 );
                 if (!stormDiagramNode) return;
                 var data = JSON.parse(stormDiagramNode);
-              
+
                 var node = null;
                 if (data.type === 'email') {
                   node = new Email.NodeModel({});
