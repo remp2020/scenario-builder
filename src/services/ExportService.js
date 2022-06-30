@@ -44,18 +44,11 @@ export class ExportService {
       }
     });
 
-    console.log('payload.elements', payload.elements);
-
     return payload;
   }
 
   getAllChildrenNodes(node, portName = 'right') {
     const port = node.ports.find(port => port.name === portName);
-
-    if (portName === 'right.0') {
-      console.log(node, portName);
-      console.log(port.links);
-    }
 
     let childrenNodes =  port.links.map(link => {
       let nextNode = null;
@@ -68,10 +61,6 @@ export class ExportService {
 
       return { ...nextNode.serialize(), portName };
     });
-
-    if (portName === 'right.0') {
-      console.log(childrenNodes);
-    }
 
     return childrenNodes;
   }
@@ -141,7 +130,7 @@ export class ExportService {
         name: node.name ? node.name : '',
         type: 'segment',
         segment: {
-          code: node.selectedSegment ? node.selectedSegment : 'all_users',
+          code: node.selectedSegment ?? null,
           descendants: this.getPositiveAndNegativeDescendants(node),
         }
       };
@@ -151,7 +140,7 @@ export class ExportService {
         name: node.name ? node.name : '',
         type: 'event',
         event: {
-          code: node.selectedTrigger ? node.selectedTrigger : 'user_created'
+          code: node.selectedTrigger ?? null
         },
         elements: this.getAllChildrenNodes(node).map(
           descendantNode => descendantNode.id
@@ -163,7 +152,7 @@ export class ExportService {
         name: node.name ? node.name : '',
         type: 'before_event',
         event: {
-          code: node.selectedTrigger ? node.selectedTrigger : 'subscription_ends'
+          code: node.selectedTrigger ?? null
         },
         elements: this.getAllChildrenNodes(node).map(
           descendantNode => descendantNode.id
@@ -222,8 +211,6 @@ export class ExportService {
           )
         );
 
-      console.log(descendants);
-
       return {
         id: node.id,
         name: node.name ? node.name : '',
@@ -254,6 +241,4 @@ export class ExportService {
 
     return descendant;
   };
-
-  
 }
